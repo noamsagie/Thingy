@@ -29,22 +29,19 @@ public class LoadDialog extends DialogFragment {
 		final LoadPresenter presenter = new LoadPresenter(this);
 
 		// Setting all workouts in a list
-		builder.setItems(presenter.getWorkouts(),
-				new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface dialog, int which) {
-						// The 'which' argument contains the index position
-						// of the selected item
-						Intent intent = new Intent(getActivity(),
-								PreviewActivity.class);
+		builder.setItems(presenter.getWorkouts(), new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int which) {
+				// The 'which' argument contains the index position
+				// of the selected item
+				Intent intent = new Intent(getActivity(), PreviewActivity.class);
 
-						// Setting the name of the selected workout in the
-						// intent's bundle
-						intent.putExtra(Consts.SELECT_WORKOUT_TAG,
-								presenter.getWorkout(which));
+				// Setting the name of the selected workout in the
+				// intent's bundle
+				intent.putExtra(Consts.SELECT_WORKOUT_TAG, presenter.getWorkout(which));
 
-						startActivity(intent);
-					}
-				});
+				startActivity(intent);
+			}
+		});
 
 		// Create the AlertDialog object and return it
 		return builder.create();

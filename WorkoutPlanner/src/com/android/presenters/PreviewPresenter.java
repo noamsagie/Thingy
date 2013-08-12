@@ -9,62 +9,62 @@ import org.xmlpull.v1.XmlPullParserException;
 
 public class PreviewPresenter extends APresenter {
 
-	private PreviewActivity m_currentView;
-	private Set m_workoutFatherSet = new Set();
+	private PreviewActivity mCurrentView;
+	private Set mWorkoutFatherSet = new Set();
 	
 	public PreviewPresenter(PreviewActivity context)
 	{
 		// A presenter must hold a reference to its view
-		m_currentView = context;
+		mCurrentView = context;
 	}
 	
-	public void UpdateToolbar()
+	public void updateToolbar()
 	{
 		// TODO Complete
 	}
 	
-	public void Save()
+	public void save()
 	{
 		// TODO Complete
 	}
 	
-	public void UpdateElementData()
+	public void updateElementData()
 	{
 		// TODO Complete
 	}
 	
-	public void LoadWorkoutData(String workoutName)
+	public void loadWorkoutData(String workoutName)
 	{
 		// READING FILE
 		try {
-			m_workoutFatherSet = XMLWorkoutReader.ReadFile(m_currentView.openFileInput(workoutName + ".xml"));
+			mWorkoutFatherSet = XMLWorkoutReader.ReadFile(mCurrentView.openFileInput(workoutName + ".xml"));
 		} catch (XmlPullParserException e) {
-			Toast.makeText(m_currentView, "Error reading file. Writing to log...", Toast.LENGTH_SHORT).show();
+			Toast.makeText(mCurrentView, "Error reading file. Writing to log...", Toast.LENGTH_SHORT).show();
 			// TODO Write to log
 			e.printStackTrace();
 		} catch (IOException e) {
-			Toast.makeText(m_currentView, "Error reading file. Writing to log...", Toast.LENGTH_SHORT).show();
+			Toast.makeText(mCurrentView, "Error reading file. Writing to log...", Toast.LENGTH_SHORT).show();
 			// TODO Write to log
 			e.printStackTrace();
 		} catch (NumberFormatException e) {
-			Toast.makeText(m_currentView, "Error reading file. Writing to log...", Toast.LENGTH_SHORT).show();
+			Toast.makeText(mCurrentView, "Error reading file. Writing to log...", Toast.LENGTH_SHORT).show();
 			// TODO Write to log
 			e.printStackTrace();
 		}
 	}
 	
-	public void CreateNewWorkout()
+	public void createNewWorkout()
 	{
 		// Creating the first set for the user to work on
-		m_workoutFatherSet.getElements().add(new Set());
+		mWorkoutFatherSet.getElements().add(new Set());
 	}
 	
-	public void RemoveElement()
+	public void removeElement()
 	{
 		// TODO Complete
 	}
 	
-	public void AddElement()
+	public void addElement()
 	{
 		// TODO Complete
 	}
@@ -74,6 +74,6 @@ public class PreviewPresenter extends APresenter {
 	// Such as CreateNewWorkout and LoadWorkoutData in PreviewActivity are to be removed! 
 	public Set getSet()
 	{
-		return m_workoutFatherSet;
+		return mWorkoutFatherSet;
 	}
 }

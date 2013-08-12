@@ -1,13 +1,18 @@
 package com.android.element;
 
 public class Rest extends AElement {
-	private double m_time = 0;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 3597047023990402265L;
+	
+	private double mTime = 0;
 
 	public double getTime() {
-		return m_time;
+		return mTime;
 	}
 
 	public void setTime(double time) {
-		this.m_time = time;
+		this.mTime = time;
 	}
 }

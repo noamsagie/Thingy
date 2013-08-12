@@ -10,7 +10,7 @@ import com.android.presenters.SaveConfirmPresenter;
 
 public class SaveConfirmDialog extends DialogFragment {
 
-	private String m_workoutName;
+	private String mWorkoutName;
 
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -19,8 +19,7 @@ public class SaveConfirmDialog extends DialogFragment {
 		// Retrieve workout name from bundle. Retrieving here because bundle
 		// description mentioned something about having to get arguments right
 		// after dialog creation
-		m_workoutName = new String(getArguments().getCharSequence(
-				Consts.WORKOUT_NAME_KEY).toString());
+		mWorkoutName = new String(getArguments().getCharSequence(Consts.WORKOUT_NAME_KEY).toString());
 
 		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
@@ -29,26 +28,23 @@ public class SaveConfirmDialog extends DialogFragment {
 		final SaveConfirmPresenter presenter = new SaveConfirmPresenter(this);
 
 		// Create confirmation dialog instead of the regular dialog
-		builder.setTitle(R.string.dialog_confirm_overwrite)
-				.setPositiveButton(R.string.dialog_save_confirm,
-						new DialogInterface.OnClickListener() {
-							public void onClick(DialogInterface dialog, int id) {
-								// Check if there's any input at all
-								presenter.Save();
-							}
-						})
-				.setNegativeButton(R.string.dialog_save_cancel,
-						new DialogInterface.OnClickListener() {
-							public void onClick(DialogInterface dialog, int id) {
-								// User cancelled the dialog
-							}
-						});
+		builder.setTitle(R.string.dialog_confirm_overwrite).setPositiveButton(R.string.dialog_save_confirm, new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int id) {
+				// Check if there's any input at all
+				presenter.Save();
+			}
+		}).setNegativeButton(R.string.dialog_cancel, new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int id) {
+				// User cancelled the dialog
+				dismiss();
+			}
+		});
 
 		// Create the AlertDialog object and return it
 		return builder.create();
 	}
 
 	public String getWorkoutName() {
-		return m_workoutName;
+		return mWorkoutName;
 	}
 }

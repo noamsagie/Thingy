@@ -1,40 +1,46 @@
 package com.android.element;
 
-public abstract class AElement {
-	private String m_name = "";
-	private String m_comment = "";
-	private String m_sound = "";
-	private int m_id = 0;
+import java.io.Serializable;
+
+public abstract class AElement implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -6355546541938822573L;
+	private String mName = "";
+	private String mComment = "";
+	private String mSound = "";
+	private int mId = 0;
 
 	public String getName() {
-		return m_name;
+		return mName;
 	}
 
 	public void setName(String name) {
-		this.m_name = name;
+		this.mName = name;
 	}
 
 	public String getComment() {
-		return m_comment;
+		return mComment;
 	}
 
 	public void setComment(String comment) {
-		this.m_comment = comment;
+		this.mComment = comment;
 	}
 
 	public String getSound() {
-		return m_sound;
+		return mSound;
 	}
 
 	public void setSound(String sound) {
-		this.m_sound = sound;
+		this.mSound = sound;
 	}
 
 	public int getId() {
-		return m_id;
+		return mId;
 	}
 
 	public void setId(int id) {
-		this.m_id = id;
+		this.mId = id;
 	}
 }

@@ -10,11 +10,11 @@ import org.xmlpull.v1.XmlPullParserException;
 
 public class SaveConfirmPresenter {
 
-	private SaveConfirmDialog m_currentView;
+	private SaveConfirmDialog mCurrentView;
 
 	public SaveConfirmPresenter(SaveConfirmDialog context) {
 		// A presenter must hold a reference to its view
-		m_currentView = context;
+		mCurrentView = context;
 	}
 
 	// Saves the file
@@ -24,9 +24,9 @@ public class SaveConfirmPresenter {
 			XMLWorkoutWriter.WriteFile(
 					// XXX Decide if the current solution to the problem of
 					// getting the father set is a decent one
-					Globals.fatherSet,
-					m_currentView.getActivity().openFileOutput(
-							m_currentView.getWorkoutName()
+					Globals.sFatherSet,
+					mCurrentView.getActivity().openFileOutput(
+							mCurrentView.getWorkoutName()
 									+ Consts.FILE_EXTENSION,
 							Context.MODE_APPEND));
 		} catch (IllegalArgumentException e1) {

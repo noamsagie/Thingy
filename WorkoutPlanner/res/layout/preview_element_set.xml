@@ -1,39 +1,77 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/previewSetLayout"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent" >
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/preview_set_item"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/whiteish"
+    android:gravity="center_horizontal|top"
+    android:orientation="vertical" >
 
-    <TableRow
-        android:id="@+id/tableRow1"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="12dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginLeft="12dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="12dp"
+        android:orientation="horizontal" >
 
         <TextView
             android:id="@+id/previewSetNameLabel"
+            style="@style/small_bold"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/name_label" />
 
-        <EditText
-            android:id="@+id/previewSetNameInput"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/empty"
-            android:inputType="text" />
+        <Space
+            android:layout_width="0dip"
+            android:layout_height="match_parent"
+            android:layout_weight="1" />
 
         <TextView
-            android:id="@+id/previewSetRepetitionsLabel"
+            android:id="@+id/previewRepetitionsInput"
+            style="@style/small_bold"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/sets_label" />
+            android:text="@string/sets_default_input" />
+    </LinearLayout>
 
-        <EditText
-            android:id="@+id/previewSetRepetitionsInput"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/empty"
-            android:inputType="text" />
+    <View
+        android:id="@+id/hairline"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginStart="8dp"
+        android:background="#28ffffff" />
+
+    <FrameLayout
+        android:id="@+id/infoArea"
+        android:layout_width="match_parent"
+        android:layout_height="32dp"
+        android:clickable="true"
+        android:gravity="center_vertical"
+        android:paddingLeft="16dp"
+        android:paddingStart="16dp" >
+
+        <ImageView
+            android:id="@+id/expand"
+            android:layout_width="48dp"
+            android:layout_height="32dp"
+            android:layout_gravity="end"
+            android:contentDescription="@string/expand_item"
+            android:src="@drawable/ic_expand_down" />
+    </FrameLayout>
+
+    <LinearLayout
+        android:id="@+id/expandArea"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="gone" >
 
         <CheckBox
             android:id="@+id/previewSetEndlessInput"
@@ -42,46 +80,78 @@
             android:checked="false"
             android:text="@string/endless_string" />
 
-    </TableRow>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal" >
 
-    <TableRow
-        android:id="@+id/tableRow2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" >
+            <TextView
+                android:id="@+id/previewSetCommentLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/comment_label" />
 
-        <TextView
-            android:id="@+id/previewSetCommentLabel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/comment_label" />
+            <EditText
+                android:id="@+id/previewSetCommentInput"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:inputType="text" />
+        </LinearLayout>
 
-        <EditText
-            android:id="@+id/previewSetCommentInput"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:inputType="text" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal" >
 
-    </TableRow>
+            <TextView
+                android:id="@+id/previewSetSoundLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/sound_label" />
 
-    <TableRow
-        android:id="@+id/tableRow3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" >
+            <EditText
+                android:id="@+id/previewSetSoundInput"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:inputType="text"
+                android:text="@string/empty" />
+        </LinearLayout>
 
-        <TextView
-            android:id="@+id/previewSetSoundLabel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/sound_label" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" >
 
-        <EditText
-            android:id="@+id/previewSetSoundInput"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/empty" 
-            android:inputType="text"/>
+            <TextView
+                android:id="@+id/previewSetElements"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="@string/elements_label" />
+        </LinearLayout>
 
+        <View
+            android:id="@+id/hairline"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginStart="8dp"
+            android:background="#28ffffff" />
 
-    </TableRow>
+        <FrameLayout
+            android:id="@+id/collapse"
+            android:layout_width="match_parent"
+            android:layout_height="32dp"
+            android:clickable="true"
+            android:contentDescription="@string/collapse_item" >
 
-</TableLayout>
+            <ImageView
+                android:layout_width="48dp"
+                android:layout_height="32dp"
+                android:layout_gravity="end"
+                android:contentDescription="@string/collapse_item"
+                android:src="@drawable/ic_expand_up" />
+        </FrameLayout>
+    </LinearLayout>
+</LinearLayout>

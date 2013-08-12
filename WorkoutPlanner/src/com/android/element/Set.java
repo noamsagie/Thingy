@@ -3,31 +3,37 @@ package com.android.element;
 import java.util.ArrayList;
 
 public class Set extends AElement {
-	private int m_repetitions = 0;
-	private boolean m_isEndless;
-	private ArrayList<AElement> m_elements = new ArrayList<AElement>();
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -3008889828323557540L;
+	
+	private int mRepetitions = 0;
+	private boolean mIsEndless;
+	private ArrayList<AElement> mElements = new ArrayList<AElement>();
 
 	public int getRepetitions() {
-		return m_repetitions;
+		return mRepetitions;
 	}
 
 	public void setRepetitions(int repetitions) {
-		this.m_repetitions = repetitions;
+		this.mRepetitions = repetitions;
 	}
 
 	public ArrayList<AElement> getElements() {
-		return m_elements;
+		return mElements;
 	}
 
 	public void setElements(ArrayList<AElement> elements) {
-		this.m_elements = elements;
+		this.mElements = elements;
 	}
 	
 	public boolean getEndless() {
-		return m_isEndless;
+		return mIsEndless;
 	}
 
 	public void setEndless(boolean isEndless) {
-		this.m_isEndless = isEndless;
+		this.mIsEndless = isEndless;
 	}
 }

@@ -3,12 +3,12 @@
     package="com.android.views"
     android:versionCode="1"
     android:versionName="1.0" >
-    
-    <uses-permission android:name="android.permission.WAKE_LOCK"/>
+
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <uses-sdk
-        android:minSdkVersion="11"
-        android:targetSdkVersion="17" />
+        android:minSdkVersion="14"
+        android:targetSdkVersion="18" />
 
     <application
         android:allowBackup="true"
@@ -24,12 +24,19 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        
-        <activity android:name=".LoadDialog"></activity>
-        <activity android:name=".AboutActivity"></activity>
-        <activity android:name=".PreviewActivity"></activity>
-        <activity android:name=".SaveDialog"></activity>
-        <activity android:name=".GaysActivity"></activity>
+        <activity android:name=".LoadDialog" >
+        </activity>
+        <activity android:name=".AboutActivity" >
+        </activity>
+        <activity
+            android:name=".PreviewActivity"
+            android:label="@string/preview_activity_label"
+            android:windowSoftInputMode="adjustPan" >
+        </activity>
+        <activity android:name=".SaveDialog" >
+        </activity>
+        <activity android:name=".GaysActivity" >
+        </activity>
     </application>
 
 </manifest>

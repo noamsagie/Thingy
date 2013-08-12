@@ -5,23 +5,23 @@ import java.io.File;
 
 public class LoadPresenter extends APresenter {
 
-	private String[] m_arrWorkouts;
-	private LoadDialog m_currentView;
+	private String[] mArrWorkouts;
+	private LoadDialog mCurrentView;
 
 	public LoadPresenter(LoadDialog context) {
 		// A presenter must hold a reference to its view
-		m_currentView = context;
+		mCurrentView = context;
 
 		// Loading the list of available workouts
-		LoadWorkoutList();
+		loadWorkoutList();
 	}
 
-	private void LoadWorkoutList() {
+	private void loadWorkoutList() {
 		// Length of file extension characters
 		final int FILE_EXTENSION = 4;
 
 		// Get access to the app storage file
-		File workoutFile = new File(m_currentView.getActivity().getFilesDir()
+		File workoutFile = new File(mCurrentView.getActivity().getFilesDir()
 				.getPath());
 
 		String[] workoutFiles = workoutFile.list();
@@ -29,22 +29,22 @@ public class LoadPresenter extends APresenter {
 		// If there are any workouts at all
 		if (workoutFiles != null) {
 			// Initialize array of workouts
-			m_arrWorkouts = new String[workoutFiles.length];
+			mArrWorkouts = new String[workoutFiles.length];
 
 			// Get all workout names from file
 			for (int i = 0; i < workoutFiles.length; i++) {
 				// Add current workout and remove ".xml" from its name
-				m_arrWorkouts[i] = workoutFiles[i].substring(0,
+				mArrWorkouts[i] = workoutFiles[i].substring(0,
 						workoutFiles[i].length() - FILE_EXTENSION);
 			}
 		}
 	}
 
 	public String[] getWorkouts() {
-		return m_arrWorkouts;
+		return mArrWorkouts;
 	}
 
 	public String getWorkout(int index) {
-		return m_arrWorkouts[index];
+		return mArrWorkouts[index];
 	}
 }

@@ -5,5 +5,5 @@ import com.android.element.Set;
 public class Globals {
 
 	// Mutli-usable variables
-	public static Set fatherSet = new Set();
+	public static Set sFatherSet = new Set();
 }

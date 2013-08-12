@@ -11,17 +11,24 @@
     <string name="dialog_select_workout">Select Workout</string>
 	<string name="dialog_save_workout">Save Workout As</string>
     <string name="dialog_save_confirm">Save</string>
-    <string name="dialog_save_cancel">Cancel</string>
+    <string name="dialog_cancel">Cancel</string>
+    <string name="dialog_ok">OK</string>
     <string name="gays_backToCurrent">Back To Current Element</string>
     <string name="main_gays">Gays Screen</string>
     <string name="gays_astring">GaysAString</string>
     <string name="enter_file_name">Please enter the name for the workout</string>
     <string name="dialog_confirm_overwrite">Are you sure you want to overwrite the workout?</string>
-    <string name="name_label">Name:</string>
+    <string name="name_label">Exercise Name</string>
     <string name="empty"></string>
     <string name="comment_label">Comment:</string>
-    <string name="sets_label">X</string>
+    <string name="sets_label">Enter Number</string>
+    <string name="sets_default_input">1</string>
     <string name="sound_label">Sound:</string>
     <string name="endless_string">Endless Set</string>
+    <string name="expand_item">Extra Set item data</string>
+    <string name="collapse_item">collapse set item</string>
+    <string name="item_deleted">Item deleted.</string>
+    <string name="elements_label">Phases:</string>
+    <string name="preview_activity_label">Edit Workout</string>
     
 </resources>

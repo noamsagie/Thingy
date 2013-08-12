@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+
+    <dimen name="toast_bar_bottom_margin_in_conversation">24dip</dimen>
+    <dimen name="body_font_size">18sp</dimen>
+	<dimen name="medium_font_size">60dp</dimen>
+	<dimen name="small_font_size">24sp</dimen>
+	<dimen name="smaller_font_size">18sp</dimen>
+	
+</resources>

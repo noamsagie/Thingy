@@ -2,11 +2,11 @@ package com.android.presenters;
 
 abstract public class APresenter {
 
-	public void UpdateNonDynamicFields() {
+	public void updateNonDynamicFields() {
 
 	}
 
-	private void FindElementByID() {
+	private void findElementByID() {
 
 	}
 }

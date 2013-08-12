@@ -39,25 +39,24 @@ public class AboutActivity extends Activity {
 				Set fatherSet = new Set();
 				fatherSet.setName("BestFatherEver");
 				
-				Set moshe = new Set();
-				moshe.setName("Moshe");
-				moshe.setComment("hi");
-				moshe.setSound("sound1");
-				moshe.setRepetitions(4);
-				moshe.setEndless(false);
-				fatherSet.getElements().add(moshe);
+				Set set1 = new Set();
+				set1.setName("Moshe");
+				set1.setComment("hi");
+				set1.setSound("sound1");
+				set1.setRepetitions(4);
+				fatherSet.getElements().add(set1);
 				
 				Rest rest1 = new Rest();
 				rest1.setName("resty rest");
 				rest1.setComment("fuck you");
 				rest1.setSound("sound2");
 				rest1.setTime(20.00);
-				moshe.getElements().add(rest1);
+				set1.getElements().add(rest1);
 				
 				Set set2 = new Set();
 				set2.setName("lol");
 				set2.setSound("sound1");
-				moshe.setEndless(true);
+				set2.setEndless(true);
 				fatherSet.getElements().add(set2);
 				
 				RepetitionExercise repEx = new RepetitionExercise();
@@ -72,6 +71,9 @@ public class AboutActivity extends Activity {
 				timeEx.setSound("sound5");
 				timeEx.setTime(35.00);
 				set2.getElements().add(timeEx);
+				
+				// Remove existing file if there is
+				v.getContext().deleteFile(fatherSet.getName() + ".xml");
 				
 				// WRITING FILE
 					try {
@@ -93,6 +95,7 @@ public class AboutActivity extends Activity {
 						// TODO Write to log
 						e1.printStackTrace();
 					}
+				
 				LoadDialog a = new LoadDialog();
 				
 				a.show(getFragmentManager(), null);

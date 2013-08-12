@@ -15,18 +15,18 @@ import org.xmlpull.v1.XmlPullParserException;
 
 public class SavePresenter {
 
-	private SaveDialog m_currentView;
+	private SaveDialog mCurrentView;
 
 	public SavePresenter(SaveDialog context) {
 		// A presenter must hold a reference to its view
-		m_currentView = context;
+		mCurrentView = context;
 	}
 
 	// Requires name input if empty. Requires confirmation if
 	// file already exists
 	public void ProcessRequest() {
 		// Check if name was given and not just spaces
-		if (!m_currentView.getWorkoutName().equals("")) {
+		if (!mCurrentView.getWorkoutName().equals("")) {
 			// Check if file already exists
 			if (fileExists()) {
 				SaveConfirmDialog dialog = new SaveConfirmDialog();
@@ -35,18 +35,18 @@ public class SavePresenter {
 				Bundle b = new Bundle();
 
 				b.putCharSequence(Consts.WORKOUT_NAME_KEY,
-						m_currentView.getWorkoutName());
+						mCurrentView.getWorkoutName());
 				dialog.setArguments(b);
 
 				// Show confirmation dialog
-				dialog.show(m_currentView.getFragmentManager(), null);
+				dialog.show(mCurrentView.getFragmentManager(), null);
 			} else {
 				// Save the file
 				Save();
 			}
 		} else {
 			// If no name was given, require one
-			Toast.makeText(m_currentView.getActivity(),
+			Toast.makeText(mCurrentView.getActivity(),
 					R.string.enter_file_name, Toast.LENGTH_SHORT).show();
 		}
 	}
@@ -58,9 +58,9 @@ public class SavePresenter {
 			XMLWorkoutWriter.WriteFile(
 					// XXX Decide if the current solution to the problem is
 					// a decent one
-					Globals.fatherSet,
-					m_currentView.getActivity().openFileOutput(
-							m_currentView.getWorkoutName()
+					Globals.sFatherSet,
+					mCurrentView.getActivity().openFileOutput(
+							mCurrentView.getWorkoutName()
 									+ Consts.FILE_EXTENSION,
 							Context.MODE_APPEND));
 		} catch (IllegalArgumentException e1) {
@@ -84,7 +84,7 @@ public class SavePresenter {
 		boolean result = false;
 
 		// Get access to the file
-		File workoutFile = new File(m_currentView.getActivity().getFilesDir()
+		File workoutFile = new File(mCurrentView.getActivity().getFilesDir()
 				.getPath());
 
 		// Get list of workouts
@@ -95,7 +95,7 @@ public class SavePresenter {
 			for (String currentWorkout : workoutFiles) {
 				// If current workout has the same name as input set true and
 				// exit
-				if (currentWorkout.equals(m_currentView.getWorkoutName()
+				if (currentWorkout.equals(mCurrentView.getWorkoutName()
 						+ Consts.FILE_EXTENSION)) {
 					result = true;
 				}
