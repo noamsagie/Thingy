@@ -15,4 +15,14 @@ public class Rest extends AElement {
 	public void setTime(double time) {
 		this.mTime = time;
 	}
+	
+	public Rest() {}
+	
+	public Rest(Rest original) {
+		setComment(original.getComment());
+		setId(original.getId());
+		setName(original.getName());
+		setSound(original.getSound());
+		setTime(original.getTime());
+	}
 }

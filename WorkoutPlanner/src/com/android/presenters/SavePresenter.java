@@ -1,7 +1,6 @@
 package com.android.presenters;
 
 import android.content.Context;
-import android.os.Bundle;
 import android.widget.Toast;
 import com.android.dal.XMLWorkoutWriter;
 import com.android.global.Consts;
@@ -24,25 +23,18 @@ public class SavePresenter {
 
 	// Requires name input if empty. Requires confirmation if
 	// file already exists
-	public void ProcessRequest() {
+	public void processRequest() {
 		// Check if name was given and not just spaces
 		if (!mCurrentView.getWorkoutName().equals("")) {
 			// Check if file already exists
 			if (fileExists()) {
-				SaveConfirmDialog dialog = new SaveConfirmDialog();
-
-				// Set name of file in bundle before creating the dialog
-				Bundle b = new Bundle();
-
-				b.putCharSequence(Consts.WORKOUT_NAME_KEY,
-						mCurrentView.getWorkoutName());
-				dialog.setArguments(b);
+				SaveConfirmDialog dialog = SaveConfirmDialog.newInstance(mCurrentView.getWorkoutName());
 
 				// Show confirmation dialog
 				dialog.show(mCurrentView.getFragmentManager(), null);
 			} else {
 				// Save the file
-				Save();
+				save();
 			}
 		} else {
 			// If no name was given, require one
@@ -52,7 +44,13 @@ public class SavePresenter {
 	}
 
 	// Saves the file
-	private void Save() {
+	private void save() {
+		// Remove existing file if there is
+		mCurrentView.getActivity().deleteFile(mCurrentView.getWorkoutName() + Consts.FILE_EXTENSION);  
+		
+		// Setting name to fatherSet
+		Globals.sFatherSet.setName(mCurrentView.getWorkoutName());
+		
 		// WRITING FILE
 		try {
 			XMLWorkoutWriter.WriteFile(
@@ -76,6 +74,8 @@ public class SavePresenter {
 			// TODO Write to log
 			e1.printStackTrace();
 		}
+		
+		Toast.makeText(mCurrentView.getActivity(), Consts.SAVE_SUCCESS, Toast.LENGTH_SHORT).show();
 	}
 
 	// Returns true if file exists

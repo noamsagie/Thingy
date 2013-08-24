@@ -14,7 +14,7 @@
             style="@style/smaller_bold"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/name_label" />
+            android:text="@string/default_element_name" />
 
         <Space
             android:layout_width="0dip"
@@ -35,7 +35,7 @@
 
         <EditText
             android:id="@+id/previewElementComment"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="text" />
     </LinearLayout>
@@ -53,7 +53,7 @@
 
         <EditText
             android:id="@+id/previewElementSound"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="text" />
     </LinearLayout>

@@ -19,6 +19,7 @@ public class GaysActivity extends Activity {
 		mainListView.setScrollingCacheEnabled(true);
 		
 		ArrayList<Set> setList = new ArrayList<Set>();
+	/*	setList.add(new Set());
 		setList.add(new Set());
 		setList.add(new Set());
 		setList.add(new Set());
@@ -26,8 +27,7 @@ public class GaysActivity extends Activity {
 		setList.add(new Set());
 		setList.add(new Set());
 		setList.add(new Set());
-		setList.add(new Set());
-		setList.add(new Set());
+		setList.add(new Set());*/
 		
 		// Create and populate a List of planet names.
 		GaysSetAdapter gaysSetAdapter = new GaysSetAdapter(this, R.layout.gays_element_set, setList);

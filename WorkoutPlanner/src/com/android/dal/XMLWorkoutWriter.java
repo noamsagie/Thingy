@@ -222,6 +222,36 @@ public class XMLWorkoutWriter {
 
 		// End sound tag
 		xmlSerializer.endTag(null, Consts.XML_TAG_ELEMENT_SOUND);
+		
+		// Start data tag
+		xmlSerializer.startTag(null, Consts.XML_TAG_REPETITION_EXERCISE_DATA);
+		
+		// Set reps
+		for (int rep : repEx.getReps()) {
+			// Start reps tag
+			xmlSerializer.startTag(null, Consts.XML_TAG_REPETITION_EXERCISE_REPS);
+
+			// Set number of reps
+			xmlSerializer.text(String.valueOf(rep));
+
+			// End reps tag
+			xmlSerializer.endTag(null, Consts.XML_TAG_REPETITION_EXERCISE_REPS);
+		}
+		
+		// Set weights
+		for (double weight : repEx.getWeights()) {
+			// Start weights tag
+			xmlSerializer.startTag(null, Consts.XML_TAG_REPETITION_EXERCISE_WEIGHTS);
+
+			// Set weights value
+			xmlSerializer.text(String.valueOf(weight));
+
+			// End weights tag
+			xmlSerializer.endTag(null, Consts.XML_TAG_REPETITION_EXERCISE_WEIGHTS);
+		}
+		
+		// End data tag
+		xmlSerializer.endTag(null, Consts.XML_TAG_REPETITION_EXERCISE_DATA);
 
 		// End RepetitionExercise tag
 		xmlSerializer.endTag(null, Consts.XML_TAG_REPETITION_EXERCISE);

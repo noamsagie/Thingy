@@ -1,5 +1,8 @@
 package com.android.views;
 
+import android.content.Context;
+import android.view.inputmethod.InputMethodManager;
+
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
@@ -29,14 +32,27 @@ public class SaveDialog extends DialogFragment {
 		builder.setTitle(R.string.dialog_save_workout).setView(mWorkoutName).setPositiveButton(R.string.dialog_save_confirm, new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int id) {
 				// Check if there's any input at all
-				presenter.ProcessRequest();
+				presenter.processRequest();
+				
+				// Close keyboard
+				((InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE)).
+					hideSoftInputFromWindow(mWorkoutName.getWindowToken(), 0);
 			}
 		}).setNegativeButton(R.string.dialog_cancel, new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int id) {
+				
+				// Close keyboard
+				((InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE)).
+					hideSoftInputFromWindow(mWorkoutName.getWindowToken(), 0);
+				
 				// User cancelled the dialog
 				dismiss();
 			}
 		});
+		
+		// Open keyboard
+		((InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE)).
+				toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
 
 		// Create the AlertDialog object and return it
 		return builder.create();

@@ -13,6 +13,9 @@ public class Consts {
 	public static final String XML_TAG_ELEMENT_NAME = "name";
 	public static final String XML_TAG_ELEMENT_SOUND = "sound";
 	public static final String XML_TAG_SET_ELEMENTS = "elements";
+	public static final String XML_TAG_REPETITION_EXERCISE_DATA = "repExData";
+	public static final String XML_TAG_REPETITION_EXERCISE_REPS = "repExReps";
+	public static final String XML_TAG_REPETITION_EXERCISE_WEIGHTS = "repExWeights";
 	public static final String XML_TAG_REST = "rest";
 	public static final String XML_TAG_ELEMENT_TIME = "time";
 	public static final String XML_TAG_REPETITION_EXERCISE = "repetitionExercise";
@@ -22,4 +25,11 @@ public class Consts {
 	// Others
 	public static final String FILE_EXTENSION = ".xml";
 	public static final String WORKOUT_NAME_KEY = "WorkoutName";
+	public static final String SET_REPETITIONS_METHOD_NAME = "setRepetitions";
+	public static final String SET_TIME_METHOD_NAME = "setTime";
+	public static final String GET_REPS_MEHOD_NAME = "getReps";
+	public static final String GET_WEIGHTS_METHOD_NAME = "getWeights";
+	
+	// Toast Texts
+	public static final String SAVE_SUCCESS = "File saved successfully";
 }

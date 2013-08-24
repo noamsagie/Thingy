@@ -31,6 +31,18 @@ public class SetNameDialog extends DialogFragment {
 	public interface onNameEnteredListener {
 		public void onNameInputEntered(AElement element, String nameValue);
 	}
+	
+	@Override
+	public void onPause() {
+		super.onPause();
+		
+		// Close keyboard
+		((InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE)).
+			hideSoftInputFromWindow(mSetName.getWindowToken(), 0);
+		
+		// Close dialog if paused (screen locked and sich)
+		dismiss();
+	}
 
 	@Override
 	public void onAttach(Activity activity) {
@@ -55,7 +67,7 @@ public class SetNameDialog extends DialogFragment {
 
 		// Creating set name dialog. Making a text field with confirmation and
 		// cancel buttons
-		builder.setTitle(R.string.name_label).setView(mSetName).setPositiveButton(R.string.dialog_ok, new DialogInterface.OnClickListener() {
+		builder.setTitle(R.string.set_name_label).setView(mSetName).setPositiveButton(R.string.dialog_ok, new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int id) {
 				// Check if there's any input at all or if the text size is to
 				// large
@@ -100,5 +112,12 @@ public class SetNameDialog extends DialogFragment {
 
 		// Create the AlertDialog object and return it
 		return builder.create();
+	}
+	
+	@Override
+	public void onDismiss(DialogInterface dialog) {
+		// Reset variables
+		sElement = null;
+		super.dismiss();
 	}
 }

@@ -1,5 +1,7 @@
 package com.android.views;
 
+import com.android.global.Consts;
+
 import android.app.Activity;
 import android.content.Context;
 import android.media.AudioManager;
@@ -35,70 +37,38 @@ public class AboutActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				// TODO Open a site that would have tutorials for this app
-				// Valid data
-				Set fatherSet = new Set();
-				fatherSet.setName("BestFatherEver");
-				
-				Set set1 = new Set();
-				set1.setName("Moshe");
-				set1.setComment("hi");
-				set1.setSound("sound1");
-				set1.setRepetitions(4);
-				fatherSet.getElements().add(set1);
-				
-				Rest rest1 = new Rest();
-				rest1.setName("resty rest");
-				rest1.setComment("fuck you");
-				rest1.setSound("sound2");
-				rest1.setTime(20.00);
-				set1.getElements().add(rest1);
-				
-				Set set2 = new Set();
-				set2.setName("lol");
-				set2.setSound("sound1");
-				set2.setEndless(true);
-				fatherSet.getElements().add(set2);
-				
-				RepetitionExercise repEx = new RepetitionExercise();
-				repEx.setName("name");
-				repEx.setComment("none");
-				repEx.setSound("sound3");
-				set2.getElements().add(repEx);
-				
-				TimeExercise timeEx = new TimeExercise();
-				timeEx.setName("hurry!");
-				timeEx.setComment("time is money");
-				timeEx.setSound("sound5");
-				timeEx.setTime(35.00);
-				set2.getElements().add(timeEx);
-				
+
+				// TEMP - DEBUGGING
+				Set fatherSet = new Set(-1);
+				fatherSet.setName("Empty");
+
 				// Remove existing file if there is
-				v.getContext().deleteFile(fatherSet.getName() + ".xml");
-				
+				v.getContext().deleteFile(fatherSet.getName() + Consts.FILE_EXTENSION);
+
 				// WRITING FILE
-					try {
-						XMLWorkoutWriter.WriteFile(fatherSet, openFileOutput(fatherSet.getName() + ".xml", Context.MODE_APPEND));
-					} catch (IllegalArgumentException e1) {
-						Toast.makeText(v.getContext(), "Error writing file. Writing to log...", Toast.LENGTH_SHORT).show();
-						// TODO Write to log
-						e1.printStackTrace();
-					} catch (IllegalStateException e1) {
-						Toast.makeText(v.getContext(), "Error writing file. Writing to log...", Toast.LENGTH_SHORT).show();
-						// TODO Write to log
-						e1.printStackTrace();
-					} catch (IOException e1) {
-						Toast.makeText(v.getContext(), "Error writing file. Writing to log...", Toast.LENGTH_SHORT).show();
-						// TODO Write to log
-						e1.printStackTrace();
-					} catch (XmlPullParserException e1) {
-						Toast.makeText(v.getContext(), "Error writing file. Writing to log...", Toast.LENGTH_SHORT).show();
-						// TODO Write to log
-						e1.printStackTrace();
-					}
-				
+				try {
+					XMLWorkoutWriter.WriteFile(fatherSet, openFileOutput(fatherSet.getName() + Consts.FILE_EXTENSION, Context.MODE_APPEND));
+				} catch (IllegalArgumentException e1) {
+					Toast.makeText(v.getContext(), "Error writing file. Writing to log...", Toast.LENGTH_SHORT).show();
+					// TODO Write to log
+					e1.printStackTrace();
+				} catch (IllegalStateException e1) {
+					Toast.makeText(v.getContext(), "Error writing file. Writing to log...", Toast.LENGTH_SHORT).show();
+					// TODO Write to log
+					e1.printStackTrace();
+				} catch (IOException e1) {
+					Toast.makeText(v.getContext(), "Error writing file. Writing to log...", Toast.LENGTH_SHORT).show();
+					// TODO Write to log
+					e1.printStackTrace();
+				} catch (XmlPullParserException e1) {
+					Toast.makeText(v.getContext(), "Error writing file. Writing to log...", Toast.LENGTH_SHORT).show();
+					// TODO Write to log
+					e1.printStackTrace();
+				}
+
 				LoadDialog a = new LoadDialog();
-				
 				a.show(getFragmentManager(), null);
+				// TEMP - DEBUGGING
 			}
 		});
 	}

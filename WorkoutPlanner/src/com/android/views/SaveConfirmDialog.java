@@ -5,21 +5,21 @@ import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import com.android.global.Consts;
 import com.android.presenters.SaveConfirmPresenter;
 
 public class SaveConfirmDialog extends DialogFragment {
 
-	private String mWorkoutName;
+	private static String sWorkoutName;
+	
+	public static SaveConfirmDialog newInstance(String workoutName) {
+		final SaveConfirmDialog frag = new SaveConfirmDialog();
+		sWorkoutName = workoutName;
+		return frag;
+	}
 
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
-		// Retrieve workout name from bundle. Retrieving here because bundle
-		// description mentioned something about having to get arguments right
-		// after dialog creation
-		mWorkoutName = new String(getArguments().getCharSequence(Consts.WORKOUT_NAME_KEY).toString());
 
 		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
@@ -31,7 +31,7 @@ public class SaveConfirmDialog extends DialogFragment {
 		builder.setTitle(R.string.dialog_confirm_overwrite).setPositiveButton(R.string.dialog_save_confirm, new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int id) {
 				// Check if there's any input at all
-				presenter.Save();
+				presenter.save();
 			}
 		}).setNegativeButton(R.string.dialog_cancel, new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int id) {
@@ -45,6 +45,13 @@ public class SaveConfirmDialog extends DialogFragment {
 	}
 
 	public String getWorkoutName() {
-		return mWorkoutName;
+		return sWorkoutName;
+	}
+	
+	@Override
+	public void dismiss() {
+		// Reset var
+		sWorkoutName = null;
+		super.dismiss();
 	}
 }

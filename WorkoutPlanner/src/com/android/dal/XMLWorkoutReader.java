@@ -32,7 +32,7 @@ public class XMLWorkoutReader {
 			throws XmlPullParserException, IOException, NumberFormatException {
 
 		// Set variables
-		Set result = new Set();
+		Set result = new Set(-1);
 		InputStreamReader isr = null;
 
 		// Read stream
@@ -55,28 +55,6 @@ public class XMLWorkoutReader {
 		factory.setNamespaceAware(true);
 		XmlPullParser xpp = factory.newPullParser();
 		xpp.setInput(is, null);
-
-		// TODO Make sure if to remove code or if it is necessary. Current code does work.. Is it correct tho?
-/*		// Get first event
-		int eventType = xpp.next();
-
-		// Read the father Set. Ignore any data outside of its end tag
-		while ((eventType != XmlPullParser.END_TAG)
-				&& (eventType != XmlPullParser.END_DOCUMENT)) {
-
-			String name = xpp.getName();
-
-			// Validate name
-			if (name != null) {
-				// Start looking for the set tag
-				if (name.equals(Consts.XML_TAG_SET)) {
-					result = parseSet(xpp);
-				}
-			}
-
-			// Get next event
-			eventType = xpp.next();
-		}*/
 		
 		result = parseSet(xpp);
 
@@ -85,7 +63,7 @@ public class XMLWorkoutReader {
 
 	private static Set parseSet(XmlPullParser xpp)
 			throws XmlPullParserException, IOException, NumberFormatException {
-		Set result = new Set();
+		Set result = new Set(-1);
 
 		// Go over current set tag
 		while (xpp.next() != XmlPullParser.END_TAG) {
@@ -199,6 +177,19 @@ public class XMLWorkoutReader {
 				} else if (name.equals(Consts.XML_TAG_ELEMENT_SOUND)) {
 					// Set sound file path
 					result.setSound(readText(xpp));
+				} else if (name.equals(Consts.XML_TAG_REPETITION_EXERCISE_DATA)) {
+					// Set reps and weights data
+					while (xpp.next() != XmlPullParser.END_TAG) {
+						name = xpp.getName();
+						
+						if (name.equals(Consts.XML_TAG_REPETITION_EXERCISE_REPS)) {
+							// Set reps
+							result.getReps().add(Integer.parseInt(readText(xpp)));
+						} else if (name.equals(Consts.XML_TAG_REPETITION_EXERCISE_WEIGHTS)) {
+							// Set weights
+							result.getWeights().add(Double.parseDouble(readText(xpp)));
+						}
+					}
 				}
 			}
 		}
