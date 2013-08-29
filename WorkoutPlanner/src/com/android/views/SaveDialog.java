@@ -1,21 +1,41 @@
 package com.android.views;
 
-import android.content.Context;
-import android.view.inputmethod.InputMethodManager;
-
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import com.android.presenters.SavePresenter;
 
 public class SaveDialog extends DialogFragment {
 
+	onSaveCompletedListener mCallback;
+	
 	// Create text field
 	private EditText mWorkoutName;
 
+	// Container Activity must implement this interface
+	public interface onSaveCompletedListener {
+		public void onSaveCompleted(String workoutName);
+	}
+	
+	@Override
+	public void onAttach(Activity activity) {
+		super.onAttach(activity);
+
+		// This makes sure that the container activity has implemented
+		// the callback interface. If not, it throws an exception
+		try {
+			mCallback = (onSaveCompletedListener) activity;
+		} catch (ClassCastException e) {
+			throw new ClassCastException(activity.toString() + " must implement onSaveCompletedListener");
+		}
+	}
+	
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -33,6 +53,8 @@ public class SaveDialog extends DialogFragment {
 			public void onClick(DialogInterface dialog, int id) {
 				// Check if there's any input at all
 				presenter.processRequest();
+				
+				mCallback.onSaveCompleted(getWorkoutName());
 				
 				// Close keyboard
 				((InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE)).
@@ -52,7 +74,7 @@ public class SaveDialog extends DialogFragment {
 		
 		// Open keyboard
 		((InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE)).
-				toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
+				toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_NOT_ALWAYS);
 
 		// Create the AlertDialog object and return it
 		return builder.create();

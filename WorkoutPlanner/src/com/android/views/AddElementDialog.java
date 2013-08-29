@@ -9,7 +9,6 @@ import android.content.DialogInterface.OnClickListener;
 import android.os.Bundle;
 import com.android.element.RepetitionExercise;
 import com.android.element.Rest;
-import com.android.element.Set;
 import com.android.element.TimeExercise;
 
 public class AddElementDialog extends DialogFragment {
@@ -64,7 +63,7 @@ public class AddElementDialog extends DialogFragment {
 			public void onClick(DialogInterface dialog, int which) {
 				// First of all, save the untouched set into the undo set
 				// Copying original version of the clone to be able to undo
-				PreviewSetAdapter.sUndoSet = new Set(sHolder.set);
+				//PreviewSetAdapter.sUndoSet = new Set(sHolder.set); // XXX Remove if not used. Probably won't be
 				
 				// Add according to the index of the selected item
 				switch (which) {

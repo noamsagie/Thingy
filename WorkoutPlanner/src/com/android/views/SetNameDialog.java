@@ -19,7 +19,7 @@ public class SetNameDialog extends DialogFragment {
 	private EditText mSetName;
 	private static AElement sElement;
 	onNameEnteredListener mCallback;
-	private static final int MAX_TEXT_LENGTH = 12;
+	private static final int MAX_TEXT_LENGTH = 24;
 
 	public static SetNameDialog newInstance(AElement element) {
 		final SetNameDialog frag = new SetNameDialog();
@@ -108,7 +108,7 @@ public class SetNameDialog extends DialogFragment {
 		
 		// Open keyboard
 		((InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE)).
-				toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
+				toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_NOT_ALWAYS);
 
 		// Create the AlertDialog object and return it
 		return builder.create();

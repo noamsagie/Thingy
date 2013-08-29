@@ -1,5 +1,7 @@
 package com.android.views;
 
+import com.android.views.SaveDialog.onSaveCompletedListener;
+
 import android.app.ListActivity;
 import android.content.pm.ActivityInfo;
 import android.media.AudioManager;
@@ -23,14 +25,15 @@ import com.mobeta.android.dslv.DragSortController;
 import com.mobeta.android.dslv.DragSortListView;
 
 /*public class PreviewActivity extends Activity */
-public class PreviewActivity extends ListActivity implements onNumberEnteredListener, onNameEnteredListener, onElementSelectedListener, onPositionSelectedListener {
+public class PreviewActivity extends ListActivity implements onNumberEnteredListener, onNameEnteredListener, onElementSelectedListener, onPositionSelectedListener, onSaveCompletedListener {
 
 	PreviewPresenter mPresenter;
 	PreviewSetAdapter mAdapter;
 	MenuItem mUndoIcon;
 	DragSortListView mItemsList;
+	DragSortController mController;
 	
-	public static boolean sShowDragHandler = false;
+	public static boolean sEditListMode = false;
 
 	// Keys
 	private static final String KEY_SERIALIZABLE_SET = "SerializableSet";
@@ -54,11 +57,11 @@ public class PreviewActivity extends ListActivity implements onNumberEnteredList
 		DragSortListView lv = (DragSortListView) getListView();
 		lv.setDropListener(onDrop);
 		lv.setRemoveListener(onRemove);
-		DragSortController controller = buildController(lv);
+		mController = buildController(lv);
 		
 		
-		lv.setFloatViewManager(controller);
-		lv.setOnTouchListener(controller);
+		lv.setFloatViewManager(mController);
+		lv.setOnTouchListener(mController);
 		lv.setDragEnabled(true);
 
 		// Setting up basic activity requirements
@@ -131,7 +134,9 @@ public class PreviewActivity extends ListActivity implements onNumberEnteredList
 				mAdapter.remove(item);
 				mAdapter.insert(item, to);
 
+				// Reset Ids and re-lock/unlock clickability
 				mAdapter.resetIds();
+				mAdapter.lockExdends(!sEditListMode);
 			}
 		}
 	};
@@ -141,11 +146,15 @@ public class PreviewActivity extends ListActivity implements onNumberEnteredList
 		public void remove(int which) {
 			// Save to undo before removing
 			PreviewSetAdapter.sUndoSet = new Set((Set) mAdapter.getItem(which));
-			// PreviewSetAdapter.sUndoHolder =
+			
+			// FIXME NOT WORKING...
+			//mAdapter.setUpdateViewData(PreviewSetAdapter.sHolders.get(PreviewSetAdapter.sHolders.indexOf(mAdapter.getSets().get(which))));
 
 			mAdapter.remove(mAdapter.getItem(which));
 			
+			// Reset Ids and re-lock/unlock clickability
 			mAdapter.resetIds();
+			mAdapter.lockExdends(!sEditListMode);
 		}
 	};
 
@@ -168,7 +177,7 @@ public class PreviewActivity extends ListActivity implements onNumberEnteredList
 	public DragSortController buildController(DragSortListView dslv) {
 		DragSortController controller = new DragSortController(dslv);
 		controller.setDragHandleId(R.id.drag_handle);
-		controller.setRemoveEnabled(true);
+		controller.setRemoveEnabled(false);
 		controller.setSortEnabled(true);
 		controller.setDragInitMode(DragSortController.ON_DOWN);
 		controller.setRemoveMode(DragSortController.FLING_REMOVE);
@@ -185,7 +194,7 @@ public class PreviewActivity extends ListActivity implements onNumberEnteredList
 			((Set) element).setEndless(false);
 
 			// Setting the data for updating the view
-			mAdapter.setUpdateViewData(holder);
+			//mAdapter.setUpdateViewData(holder); // XXX Remove if not used. Probably won't be
 
 			// Check for repetition exercises
 			for (AElement curr : ((Set) element).getElements()) {
@@ -239,7 +248,7 @@ public class PreviewActivity extends ListActivity implements onNumberEnteredList
 	@Override
 	public void onElementSelectEntered(PreviewItemHolder holder) {
 		// Setting data needed for updating view
-		mAdapter.setUpdateViewData(holder);
+		//mAdapter.setUpdateViewData(holder); // XXX Remove if not used. Probably won't be
 
 		// Update sets
 		mAdapter.notifyDataSetChanged();
@@ -276,47 +285,37 @@ public class PreviewActivity extends ListActivity implements onNumberEnteredList
 
 			break;
 		case R.id.menu_item_undo:
-			if (PreviewSetAdapter.sUndoSet != null) {
-				// Getting item to undo. It is the same position as the undo set
-				// itself
-				Set toUndo = (Set) mAdapter.getItem(PreviewSetAdapter.sUndoSet.getId());
-
+			if (PreviewSetAdapter.sUndoSet != null) {				
 				// Change undo icon to enable
 				mUndoIcon.setIcon(R.drawable.ic_content_undo);
 
-				// Make sure undo item was not already removed
-				if (toUndo != null) {
-					// Removing
-					mAdapter.remove(toUndo);
-				}
-
 				// Inserting and refreshing
 				mAdapter.insert(PreviewSetAdapter.sUndoSet, PreviewSetAdapter.sUndoSet.getId());
-
-				// Giving holder the undo set and setting update flag
-				PreviewSetAdapter.sUndoHolder.set = PreviewSetAdapter.sUndoSet;
-
-				for (int i = 0; i < PreviewSetAdapter.sUndoSet.getElements().size(); i++) {
-					// Reseting element pointers for all element holders
-					PreviewSetAdapter.sUndoHolder.previewElementHolders.get(i).element = PreviewSetAdapter.sUndoSet.getElements().get(i);
-				}
-
-				PreviewSetAdapter.sUndoHolder.updateFlag = true;
 
 				mAdapter.notifyDataSetChanged();
 
 				// Reset undo set
 				PreviewSetAdapter.sUndoSet = null;
-				PreviewSetAdapter.sUndoHolder = null;
 
 				// Set undo to disable
 				setUndoMode(false);
 			}
 			break;
 		case R.id.menu_item_sort:
-			// Hide or show in a cycle
-			sShowDragHandler = !sShowDragHandler;
-			mAdapter.showHideSortHandler((sShowDragHandler) ? View.VISIBLE : View.GONE);
+			// Show handlers for edit mode. Then dragging and removing items is allowed, but expanding them is not
+			sEditListMode = !sEditListMode;
+			mAdapter.showHideSortHandler((sEditListMode) ? View.VISIBLE : View.GONE);
+			mController.setRemoveEnabled(sEditListMode);
+			mAdapter.lockExdends(!sEditListMode);
+			
+			// Also minimize items if entering edit mode
+			if (sEditListMode) {
+				mAdapter.minimizeAll();
+			}
+			
+			// Finally update views
+			mAdapter.notifyDataSetChanged();
+			
 			break;
 		default:
 			break;
@@ -375,5 +374,10 @@ public class PreviewActivity extends ListActivity implements onNumberEnteredList
 		// If yes, check for file name. If exists, overwrite, if not ask for
 		// name input. (call save dialog)
 		super.onBackPressed();
+	}
+
+	@Override
+	public void onSaveCompleted(String workoutName) {
+		setTitle(workoutName);
 	}
 }

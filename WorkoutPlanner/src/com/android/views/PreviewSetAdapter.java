@@ -33,9 +33,9 @@ public class PreviewSetAdapter extends ArrayAdapter<AElement> {
 	private static final String TAG = "WorkoutPlanner_PreviewSetAdapter";
 	private final int KEY_ELEMENT_LAYOUT_ID = 123456789;
 	private ArrayList<AElement> mSets;
-	static PreviewItemHolder sUndoHolder;
 	static Set sUndoSet;
 	static ArrayList<PreviewItemHolder> sHolders = new ArrayList<PreviewItemHolder>();
+	static ArrayList<Boolean> sExpandedViews = new ArrayList<Boolean>();
 
 	// Update these if indexes change!
 	private static final int CHILDREN_INDEX_AFTER_PHASES_LABEL = 3;
@@ -52,32 +52,46 @@ public class PreviewSetAdapter extends ArrayAdapter<AElement> {
 		View v;
 		PreviewItemHolder holder = null;
 
+		// Create expand flags to match the number of sets in existence
+		while (sExpandedViews.size() < position + 1) {
+			// Add a new boolean for expand mode with default false value
+			sExpandedViews.add(Boolean.valueOf(false));
+		}
+
 		// Initialize view if convertview is null
 		if (convertView == null) {
 			v = newView(parent, position);
 		}
 		// Populate from previously saved holder
 		else {
-			// If position and id of set do not match, this view needs to be
-			// re-created, not recycled.
-			// Or, if set is not the same object as the set in the array
-			// (removed for example), re-create
-			if ((((PreviewItemHolder) convertView.getTag()).set.getId() != position) || 
-				/*FIXME THIS CAUSES ALL VIEWS AFTER FIRST SWAPPED VIEW TO BE RE-CREATED. ONLY RE-CREATE REMOVED VIEW OR SOMETHING*/(!((PreviewItemHolder) convertView.getTag()).set.equals(mSets.get(position)))) {
+			// Use previous item if not null
+			v = convertView;
+
+			// Get holder
+			holder = (PreviewItemHolder) v.getTag();
+
+			// If set is not the same object as the set in the array (removed
+			// for example, or not in the listview children), re-populate with
+			// appropriate Set
+			if (!holder.set.equals(mSets.get(position))) {
 				
-				// Remove from array first
-				sHolders.remove((PreviewItemHolder) convertView.getTag());
+				// If holder elements are not empty, clear them and collapse
+				if (!holder.previewElementHolders.isEmpty()) {
+					removeElement(holder);
+					collapeExpandExercise(holder, false);
+				}
 				
-				// Re-create view
-				v = newView(parent, position);
+				// Re-populating holder with correct set
+				bindView(position, v);
+				
+				// If current holder should have elements, create them and expand
+				if (sExpandedViews.get(position)) {
+					createElements(holder);
+					populateElements(holder);
+					collapeExpandExercise(holder, true);
+				}
 			}
 			else {
-				// Use previous item if not null
-				v = convertView;
-
-				// Get holder
-				holder = (PreviewItemHolder) v.getTag();
-
 				// Update the current view's Rep exercises if boolean is true
 				if (holder.readUpdateFlag()) {
 					updateView(holder);
@@ -85,7 +99,7 @@ public class PreviewSetAdapter extends ArrayAdapter<AElement> {
 
 				// Minimize if requested
 				if (holder.readMinimizeFlag()) {
-					minimizeExercise(holder);
+					collapeExpandExercise(holder, false);
 				}
 			}
 		}
@@ -105,6 +119,8 @@ public class PreviewSetAdapter extends ArrayAdapter<AElement> {
 		View inflatedView = inflater.inflate(R.layout.preview_element_set, parent, false);
 		PreviewItemHolder holder = new PreviewItemHolder();
 
+		// Set a Set in the holder. It may be a different Set than the previous,
+		// according to position
 		holder.set = (Set) mSets.get(position);
 
 		// Set position of the set into id for later use. Very important
@@ -121,6 +137,27 @@ public class PreviewSetAdapter extends ArrayAdapter<AElement> {
 		holder.collapse = (View) inflatedView.findViewById(R.id.collapse);
 		holder.dragHandler = (ImageView) inflatedView.findViewById(R.id.drag_handle);
 
+		inflatedView.setTag(holder);
+		sHolders.add(holder);
+
+		return inflatedView;
+	}
+
+	// Remove children from the holder
+	private void removeElement(PreviewItemHolder holder) {
+		//final int setsLength = holder.set.getElements().size();
+		int elementsLength = holder.previewElementHolders.size();
+
+		// Removing views and then clearing holders
+		for (int i = 0; i < elementsLength; i++) {
+			((ViewGroup) holder.expandArea).removeViewAt(i + CHILDREN_INDEX_BEFORE_ELEMENTS);
+		}
+		
+		holder.previewElementHolders.clear();
+	}
+
+	// Create elements for holder
+	private void createElements(PreviewItemHolder holder) {
 		final int setsLength = holder.set.getElements().size();
 
 		for (int i = 0; i < setsLength; i++) {
@@ -137,7 +174,7 @@ public class PreviewSetAdapter extends ArrayAdapter<AElement> {
 				holder.previewElementHolders.add(new PreviewRepetitionExerciseHolder());
 			}
 
-			View currLayout = inflateElement(currElement, inflater, i, holder.previewElementHolders.get(i));
+			View currLayout = inflateElement(currElement, (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE), i, holder.previewElementHolders.get(i));
 
 			// Add the child before the hairline, collapse image and the add
 			// button
@@ -147,11 +184,6 @@ public class PreviewSetAdapter extends ArrayAdapter<AElement> {
 			// TODO Should be a part of a DSLV of the current set...
 			((ViewGroup) holder.expandArea).addView(currLayout, ((ViewGroup) holder.expandArea).getChildCount() - CHILDREN_INDEX_AFTER_PHASES_LABEL);
 		}
-
-		inflatedView.setTag(holder);
-		sHolders.add(holder);
-
-		return inflatedView;
 	}
 
 	private void bindView(int position, View inflatedView) {
@@ -165,7 +197,7 @@ public class PreviewSetAdapter extends ArrayAdapter<AElement> {
 		holder.soundInput.setText(holder.set.getSound());
 		holder.nameLabel.setText(holder.set.getName());
 		holder.commentInput.setText(holder.set.getComment());
-		holder.dragHandler.setVisibility((PreviewActivity.sShowDragHandler) ? View.VISIBLE : View.GONE);
+		holder.dragHandler.setVisibility((PreviewActivity.sEditListMode) ? View.VISIBLE : View.GONE);
 
 		// Make sure there is a name. If none, put default
 		if (holder.nameLabel.getText().equals("")) {
@@ -206,7 +238,8 @@ public class PreviewSetAdapter extends ArrayAdapter<AElement> {
 		holder.repetitionsLabel.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-
+				// Setting flag to true to allow populating this view
+				holder.updateFlag = true;
 				NumericDialog instance = NumericDialog.newInstance(holder, holder.set, NumericDialog.INTEGER_MODE, Consts.SET_REPETITIONS_METHOD_NAME);
 				instance.show(((Activity) getContext()).getFragmentManager(), null);
 			}
@@ -215,7 +248,7 @@ public class PreviewSetAdapter extends ArrayAdapter<AElement> {
 		holder.nameLabel.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				// Setting flag to true to allow populating this view
+				// Setting flag to true to allow updating this view
 				holder.rePopulateFlag = true;
 				SetNameDialog instance = SetNameDialog.newInstance(holder.set);
 				instance.show(((Activity) getContext()).getFragmentManager(), null);
@@ -250,6 +283,21 @@ public class PreviewSetAdapter extends ArrayAdapter<AElement> {
 				holder.expandArea.setVisibility(View.VISIBLE);
 				holder.expand.setVisibility(View.GONE);
 				holder.collapse.setVisibility(View.VISIBLE);
+
+				// Create elements of set when needed
+				createElements(holder);
+
+				// Populate elements
+				for (PreviewElementHolder elementHolder : holder.previewElementHolders) {
+					populateElement(elementHolder, holder);
+				}
+
+				// Save expand mode
+				sExpandedViews.set(holder.set.getId(), true);
+
+				// Move screen to current item
+				// ((PreviewActivity)getContext()).mItemsList.smoothScrollToPositionFromTop(holder.set.getId(),
+				// ???); FIXME Finish up here. Decide how
 			}
 		});
 
@@ -260,24 +308,36 @@ public class PreviewSetAdapter extends ArrayAdapter<AElement> {
 				holder.expandArea.setVisibility(View.GONE);
 				holder.collapse.setVisibility(View.GONE);
 				holder.expand.setVisibility(View.VISIBLE);
+
+				// Remove elements from holder
+				removeElement(holder);
+
+				// Save expand mode
+				sExpandedViews.set(holder.set.getId(), false);
 			}
 		});
 
 		holder.addElementButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
+				// Setting flag to true to allow updating this view
+				holder.updateFlag = true;
 				AddElementDialog instance = AddElementDialog.newInstance(holder);
 				instance.show(((Activity) getContext()).getFragmentManager(), null);
 			}
 		});
+		
+		populateElements(holder);
 
+		// Finally hide/show if needed - Should this be put somewhere else?
+		hideShowRepsWeights(holder);
+	}
+	
+	private void populateElements(PreviewItemHolder holder) {
 		// Populate elements
 		for (PreviewElementHolder elementHolder : holder.previewElementHolders) {
 			populateElement(elementHolder, holder);
 		}
-
-		// Finally hide/show if needed - Should this be put somewere else?
-		hideShowRepsWeights(holder);
 	}
 
 	private void populateElement(final PreviewElementHolder holder, final PreviewItemHolder father) {
@@ -691,37 +751,53 @@ public class PreviewSetAdapter extends ArrayAdapter<AElement> {
 	public void minimizeAll() {
 		// Turn a minimize flags on, then call data set changed
 		for (PreviewItemHolder curr : sHolders) {
-			minimizeExercise(curr);
+			collapeExpandExercise(curr, false);
 		}
 
 		notifyDataSetChanged();
 	}
 
-	private void minimizeExercise(PreviewItemHolder holder) {
-		// Change visibility - Hide expandArea and its data
-		holder.expandArea.setVisibility(View.GONE);
-		holder.collapse.setVisibility(View.GONE);
-		holder.expand.setVisibility(View.VISIBLE);
+	private void collapeExpandExercise(PreviewItemHolder holder, boolean expand) {
+		if (expand) {
+			// Change visibility - Show expandArea and its data
+			holder.expandArea.setVisibility(View.VISIBLE);
+			holder.collapse.setVisibility(View.VISIBLE);
+			holder.expand.setVisibility(View.GONE);
+		}
+		else {
+			// Change visibility - Hide expandArea and its data
+			holder.expandArea.setVisibility(View.GONE);
+			holder.collapse.setVisibility(View.GONE);
+			holder.expand.setVisibility(View.VISIBLE);
+		}
 	}
 
-	public void setUpdateViewData(PreviewItemHolder holder) {
-		// Setting populate flag to true because some views might need
-		// to be re-constructed
-		holder.updateFlag = true;
-
-		// Pointing holder
-		sUndoHolder = holder;
-
-		// Set undo to enable
-		((PreviewActivity) getContext()).setUndoMode(true);
-	}
+	/*
+	 * public void setUpdateViewData(???) { // Setting populate flag to true
+	 * because some views might need // to be re-constructed holder.updateFlag =
+	 * true;
+	 * 
+	 * // TODO Finish up here
+	 * 
+	 * // Set undo to enable ((PreviewActivity) getContext()).setUndoMode(true);
+	 * }
+	 */
 
 	public void showHideSortHandler(int visibility) {
-		// Set visibility, then notify changed
+		// Set visibility
 		for (PreviewItemHolder curr : sHolders) {
 			curr.dragHandler.setVisibility(visibility);
 		}
+	}
 
-		notifyDataSetChanged();
+	public void lockExdends(boolean enabled) {
+		// Set lock/unlock for expanding views
+		for (PreviewItemHolder curr : sHolders) {
+			curr.expand.setClickable(enabled);
+		}
+	}
+
+	public ArrayList<AElement> getSets() {
+		return mSets;
 	}
 }

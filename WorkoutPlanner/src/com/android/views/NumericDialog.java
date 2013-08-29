@@ -149,7 +149,7 @@ public class NumericDialog extends DialogFragment {
 				else {
 					// First of all, save the untouched set into the undo set
 					// Copying original version of the clone to be able to undo
-					PreviewSetAdapter.sUndoSet = new Set(sHolder.set);
+					//PreviewSetAdapter.sUndoSet = new Set(sHolder.set); // XXX Remove if not used. Probably won't be
 					
 					try {
 						if (sMode == INTEGER_MODE) {
