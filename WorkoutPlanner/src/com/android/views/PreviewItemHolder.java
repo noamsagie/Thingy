@@ -1,17 +1,15 @@
 package com.android.views;
 
-import android.widget.ImageView;
-
-import com.android.element.AElement;
-
-import java.util.ArrayList;
-
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import com.android.element.AElement;
 import com.android.element.Set;
+import java.util.ArrayList;
 
 public class PreviewItemHolder {
 	
@@ -31,8 +29,8 @@ public class PreviewItemHolder {
 	View expand;
 	View collapse;
 	View expandArea;
-	ArrayList<PreviewElementHolder> previewElementHolders;
-	Button addElementButton;
+	LinearLayout data;
+	Button editElementButton;
 	ImageView dragHandler;
 
 	// Other states
@@ -77,6 +75,8 @@ class PreviewElementHolder {
 	TextView nameLabel;
 	EditText soundInput;
 	EditText commentInput;
+	ImageView dragHandler;
+	LinearLayout data;
 	
 	// Other states
 	AElement element;

@@ -1,9 +1,5 @@
 package com.android.views;
 
-import java.lang.reflect.InvocationTargetException;
-
-import java.lang.reflect.Method;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -17,6 +13,8 @@ import android.widget.EditText;
 import android.widget.Toast;
 import com.android.element.AElement;
 import com.android.element.Set;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 
 public class NumericDialog extends DialogFragment {
@@ -28,16 +26,14 @@ public class NumericDialog extends DialogFragment {
 
 	private static EditText mNumValue;
 	private static AElement sElement;
-	private static PreviewItemHolder sHolder;
 	private static String sNumericMethod;
 	private static int sMode;
 	private static int sIndex = EMPTY;
 	onNumberEnteredListener mCallback;
 
-	public static NumericDialog newInstance(PreviewItemHolder holder, AElement element, int numericMode, String numericField) {
+	public static NumericDialog newInstance(AElement element, int numericMode, String numericField) {
 		final NumericDialog frag = new NumericDialog();
 		sElement = element;
-		sHolder = holder;
 		sNumericMethod = numericField;
 
 		// Set input to be numeric only
@@ -56,17 +52,17 @@ public class NumericDialog extends DialogFragment {
 	}
 
 	// An override for entering an array of numbers
-	public static NumericDialog newInstance(PreviewItemHolder holder, AElement element, int numericMode, String numericField, int index) {
+	public static NumericDialog newInstance(AElement element, int numericMode, String numericField, int index) {
 		// Set index and call override
 		sIndex = index;
 		
-		return newInstance(holder, element, numericMode, numericField);
+		return newInstance(element, numericMode, numericField);
 	}
 
 	// Container Activity must implement this interface
 	// an element than one!
 	public interface onNumberEnteredListener {
-		public void onNumericInputEntered(PreviewItemHolder holder, AElement element);
+		public void onNumericInputEntered(AElement element);
 	}
 
 	@Override
@@ -146,11 +142,7 @@ public class NumericDialog extends DialogFragment {
 
 					dismiss();
 				}
-				else {
-					// First of all, save the untouched set into the undo set
-					// Copying original version of the clone to be able to undo
-					//PreviewSetAdapter.sUndoSet = new Set(sHolder.set); // XXX Remove if not used. Probably won't be
-					
+				else {					
 					try {
 						if (sMode == INTEGER_MODE) {
 							if (sIndex == EMPTY) {
@@ -189,7 +181,7 @@ public class NumericDialog extends DialogFragment {
 						e.printStackTrace();
 					}
 					// Send the event to the host activity
-					mCallback.onNumericInputEntered(sHolder, sElement);
+					mCallback.onNumericInputEntered(sElement);
 				}
 
 				// Close keyboard
@@ -230,7 +222,6 @@ public class NumericDialog extends DialogFragment {
 		// Reset variables
 		sIndex = EMPTY;
 		sElement = null;
-		sHolder = null;
 		sMode = EMPTY;
 		sNumericMethod = "";
 		super.onDismiss(dialog);

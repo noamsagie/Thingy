@@ -7,21 +7,21 @@ import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.os.Bundle;
+import com.android.element.AElement;
 import com.android.element.RepetitionExercise;
 import com.android.element.Rest;
+import com.android.element.Set;
 import com.android.element.TimeExercise;
+import com.android.global.Consts.elementTypes;
 
 public class AddElementDialog extends DialogFragment {
 
-	private static PreviewItemHolder sHolder;
+	private static Set sSet;
 	private onElementSelectedListener mCallback;
-	private final int REPETITIONS_INDEX = 0;
-	private final int REST_INDEX = 1;
-	private final int TIME_INDEX = 2;
 
-	public static AddElementDialog newInstance(PreviewItemHolder holder) {
+	public static AddElementDialog newInstance(Set set) {
 		final AddElementDialog frag = new AddElementDialog();
-		sHolder = holder;
+		sSet = set;
 
 		return frag;
 	}
@@ -29,7 +29,7 @@ public class AddElementDialog extends DialogFragment {
 	// Container Activity must implement this interface
 	// an element than one!
 	public interface onElementSelectedListener {
-		public void onElementSelectEntered(PreviewItemHolder holder);
+		public void onElementSelectEntered(AElement newElement);
 	}
 
 	@Override
@@ -53,36 +53,40 @@ public class AddElementDialog extends DialogFragment {
 
 		// Names of elements
 		String[] elementNames = new String[3];
-		elementNames[REPETITIONS_INDEX] = getString(R.string.element_repetitions_label);
-		elementNames[REST_INDEX] = getString(R.string.element_rest_label);
-		elementNames[TIME_INDEX] = getString(R.string.element_time_label);
+		elementNames[elementTypes.REPETITIONS_INDEX.ordinal()] = getString(R.string.element_repetitions_label);
+		elementNames[elementTypes.REST_INDEX.ordinal()] = getString(R.string.element_rest_label);
+		elementNames[elementTypes.TIME_INDEX.ordinal()] = getString(R.string.element_time_label);
 
 		builder.setTitle(R.string.dialog_new_element_name).setItems(elementNames, new OnClickListener() {
+			AElement newElement = null;
 
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
-				// First of all, save the untouched set into the undo set
-				// Copying original version of the clone to be able to undo
-				//PreviewSetAdapter.sUndoSet = new Set(sHolder.set); // XXX Remove if not used. Probably won't be
 				
 				// Add according to the index of the selected item
-				switch (which) {
+				switch (elementTypes.values()[which]) {
 				case REPETITIONS_INDEX:
 					// Initialize with repetitions value
-					sHolder.set.getElements().add(new RepetitionExercise(sHolder.set.getRepetitions()));
+					newElement = new RepetitionExercise(sSet.getRepetitions());
 					break;
 				case REST_INDEX:
-					sHolder.set.getElements().add(new Rest());
+					newElement = new Rest();
 					break;
 				case TIME_INDEX:
-					sHolder.set.getElements().add(new TimeExercise());
+					newElement = new TimeExercise();
 					break;
 				default:
 					break;
 				}
+				
+				// Set element id
+				newElement.setId(sSet.getElements().size() - 1);
+				
+				// Add new element to the set
+				sSet.getElements().add(newElement);
 
-				// Update the altered view
-				mCallback.onElementSelectEntered(sHolder);
+				// Update the altered view and send back the new element
+				mCallback.onElementSelectEntered(newElement);
 				
 				dismiss();
 			}
@@ -102,7 +106,7 @@ public class AddElementDialog extends DialogFragment {
 	@Override
 	public void onDismiss(DialogInterface dialog) {
 		// Reset variables
-		sHolder = null;
+		sSet = null;
 		super.dismiss();
 	}
 }

@@ -29,6 +29,19 @@ public class Consts {
 	public static final String SET_TIME_METHOD_NAME = "setTime";
 	public static final String GET_REPS_MEHOD_NAME = "getReps";
 	public static final String GET_WEIGHTS_METHOD_NAME = "getWeights";
+	public static final String CURRENT_SET = "CurrentSet";
+	
+	// Enums
+	public enum elementTypes {
+		REPETITIONS_INDEX,
+		REST_INDEX,
+		TIME_INDEX,
+	}
+	
+	public enum resultActivities {
+		ELEMENTS_LIST,
+		PREVIEW_ACTIVITY,
+	}
 	
 	// Toast Texts
 	public static final String SAVE_SUCCESS = "File saved successfully";

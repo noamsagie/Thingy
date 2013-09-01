@@ -1,14 +1,16 @@
 package com.android.presenters;
 
-import com.android.views.LoadDialog;
+import com.android.global.Consts;
+
+import com.android.views.SelectWorkoutActivity;
 import java.io.File;
 
-public class LoadPresenter extends APresenter {
+public class SelectWorkoutPresenter extends APresenter {
 
 	private String[] mArrWorkouts;
-	private LoadDialog mCurrentView;
+	private SelectWorkoutActivity mCurrentView;
 
-	public LoadPresenter(LoadDialog context) {
+	public SelectWorkoutPresenter(SelectWorkoutActivity context) {
 		// A presenter must hold a reference to its view
 		mCurrentView = context;
 
@@ -21,7 +23,7 @@ public class LoadPresenter extends APresenter {
 		final int FILE_EXTENSION = 4;
 
 		// Get access to the app storage file
-		File workoutFile = new File(mCurrentView.getActivity().getFilesDir()
+		File workoutFile = new File(mCurrentView.getFilesDir()
 				.getPath());
 
 		String[] workoutFiles = workoutFile.list();
@@ -41,10 +43,17 @@ public class LoadPresenter extends APresenter {
 	}
 
 	public String[] getWorkouts() {
+		// Reread files and return
+		loadWorkoutList();
 		return mArrWorkouts;
 	}
 
 	public String getWorkout(int index) {
 		return mArrWorkouts[index];
+	}
+	
+	public void deleteFile() {
+		// Remove existing file if there is
+		mCurrentView.deleteFile(mCurrentView.mSelectedFile + Consts.FILE_EXTENSION);  
 	}
 }

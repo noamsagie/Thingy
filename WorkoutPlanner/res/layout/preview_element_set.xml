@@ -126,7 +126,8 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent" >
+            android:layout_height="match_parent"
+            android:orientation="vertical" >
 
             <TextView
                 android:id="@+id/previewSetElements"
@@ -134,13 +135,20 @@
                 android:layout_height="match_parent"
                 android:gravity="center"
                 android:text="@string/elements_label" />
+
+            <LinearLayout
+                android:id="@+id/previewData"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical" >
+            </LinearLayout>
         </LinearLayout>
 
         <Button
             android:id="@+id/previewSetAddElements"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/add_element_label" />
+            android:text="@string/edit_element_label" />
 
         <View
             android:id="@+id/hairline2"

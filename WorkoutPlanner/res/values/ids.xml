@@ -2,5 +2,7 @@
 <resources>
 
     <item name="drag_handle" type="id"/>
+    <item name="header_name" type="id"/>
+    <item name="header_reps" type="id"/>
 
 </resources>

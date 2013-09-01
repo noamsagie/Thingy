@@ -1,45 +1,44 @@
 package com.android.views;
 
-import com.android.views.SaveDialog.onSaveCompletedListener;
-
+import android.app.Activity;
 import android.app.ListActivity;
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.media.AudioManager;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.PopupMenu;
 import android.widget.Toast;
 import com.android.element.AElement;
 import com.android.element.RepetitionExercise;
 import com.android.element.Set;
 import com.android.global.Consts;
+import com.android.global.Consts.resultActivities;
 import com.android.global.Globals;
 import com.android.presenters.PreviewPresenter;
-import com.android.views.AddElementDialog.onElementSelectedListener;
 import com.android.views.NumericDialog.onNumberEnteredListener;
+import com.android.views.SaveDialog.onSaveCompletedListener;
 import com.android.views.SelectPositionDialog.onPositionSelectedListener;
 import com.android.views.SetNameDialog.onNameEnteredListener;
 import com.mobeta.android.dslv.DragSortController;
 import com.mobeta.android.dslv.DragSortListView;
 
-/*public class PreviewActivity extends Activity */
-public class PreviewActivity extends ListActivity implements onNumberEnteredListener, onNameEnteredListener, onElementSelectedListener, onPositionSelectedListener, onSaveCompletedListener {
+public class PreviewActivity extends ListActivity implements onNumberEnteredListener, onNameEnteredListener, onPositionSelectedListener, onSaveCompletedListener {
 
 	PreviewPresenter mPresenter;
 	PreviewSetAdapter mAdapter;
 	MenuItem mUndoIcon;
 	DragSortListView mItemsList;
 	DragSortController mController;
-	
+
+	public static boolean sIsModified = false;
 	public static boolean sEditListMode = false;
 
 	// Keys
 	private static final String KEY_SERIALIZABLE_SET = "SerializableSet";
 	private static final String KEY_SETS_LIST_SIZE = "SetsListSize";
 
-	private static final String TAG = "WorkoutPlanner_PreviewActivity";
+	// private static final String TAG = "WorkoutPlanner_PreviewActivity";
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -58,8 +57,7 @@ public class PreviewActivity extends ListActivity implements onNumberEnteredList
 		lv.setDropListener(onDrop);
 		lv.setRemoveListener(onRemove);
 		mController = buildController(lv);
-		
-		
+
 		lv.setFloatViewManager(mController);
 		lv.setOnTouchListener(mController);
 		lv.setDragEnabled(true);
@@ -73,19 +71,23 @@ public class PreviewActivity extends ListActivity implements onNumberEnteredList
 		// If creating for the first time, load or create workout
 		if (savedInstanceState == null) {
 			// Get selected workout name from intent
-			String workoutName = getIntent().getExtras().getString(Consts.SELECT_WORKOUT_TAG);
+			String workoutName = getString(R.string.new_workout);
 
 			// Load workout if exists, else making a new workout
-			if (workoutName == null) {
+			if (getIntent().getExtras() == null) {
 				mPresenter.createNewWorkout();
 			}
 			else {
+				workoutName = getIntent().getExtras().getString(Consts.SELECT_WORKOUT_TAG);
 				mPresenter.loadWorkoutData(workoutName);
 			}
-			
+
 			// Set activity title and remove icon
 			setTitle(workoutName);
 			getActionBar().setDisplayShowHomeEnabled(false);
+
+			// Set sort false
+			sEditListMode = false;
 
 			/*
 			 * conversion is always legal because the father set may only
@@ -113,7 +115,7 @@ public class PreviewActivity extends ListActivity implements onNumberEnteredList
 
 		// Set the adapter in the list view. The adapter should update the
 		// listview automatically with it's getView method
-		mAdapter = new PreviewSetAdapter(this, R.layout.gays_element_set, Globals.sFatherSet.getElements());
+		mAdapter = new PreviewSetAdapter(this, R.layout.preview_element_set, Globals.sFatherSet.getElements());
 		mItemsList = (DragSortListView) findViewById(android.R.id.list);
 
 		mItemsList.setAdapter(mAdapter);
@@ -134,9 +136,11 @@ public class PreviewActivity extends ListActivity implements onNumberEnteredList
 				mAdapter.remove(item);
 				mAdapter.insert(item, to);
 
+				// Value modified, set flag to true
+				sIsModified = true;
+
 				// Reset Ids and re-lock/unlock clickability
 				mAdapter.resetIds();
-				mAdapter.lockExdends(!sEditListMode);
 			}
 		}
 	};
@@ -146,15 +150,17 @@ public class PreviewActivity extends ListActivity implements onNumberEnteredList
 		public void remove(int which) {
 			// Save to undo before removing
 			PreviewSetAdapter.sUndoSet = new Set((Set) mAdapter.getItem(which));
-			
+
 			// FIXME NOT WORKING...
-			//mAdapter.setUpdateViewData(PreviewSetAdapter.sHolders.get(PreviewSetAdapter.sHolders.indexOf(mAdapter.getSets().get(which))));
+			// mAdapter.setUpdateViewData(PreviewSetAdapter.sHolders.get(PreviewSetAdapter.sHolders.indexOf(mAdapter.getSets().get(which))));
+
+			// Value modified, set flag to true
+			sIsModified = true;
 
 			mAdapter.remove(mAdapter.getItem(which));
-			
+
 			// Reset Ids and re-lock/unlock clickability
 			mAdapter.resetIds();
-			mAdapter.lockExdends(!sEditListMode);
 		}
 	};
 
@@ -186,15 +192,12 @@ public class PreviewActivity extends ListActivity implements onNumberEnteredList
 	}
 
 	@Override
-	public void onNumericInputEntered(PreviewItemHolder holder, AElement element) {
+	public void onNumericInputEntered(AElement element) {
 		// Check if a set was edited. If so, assuming it was the repetitions
 		// value!
 		if (element instanceof Set) {
 			// Turn endless to false if not already false
 			((Set) element).setEndless(false);
-
-			// Setting the data for updating the view
-			//mAdapter.setUpdateViewData(holder); // XXX Remove if not used. Probably won't be
 
 			// Check for repetition exercises
 			for (AElement curr : ((Set) element).getElements()) {
@@ -227,6 +230,9 @@ public class PreviewActivity extends ListActivity implements onNumberEnteredList
 			}
 		}
 
+		// Value modified, set flag to true
+		sIsModified = true;
+
 		// Update sets
 		mAdapter.notifyDataSetChanged();
 	}
@@ -241,14 +247,8 @@ public class PreviewActivity extends ListActivity implements onNumberEnteredList
 			mPresenter.save();
 		}
 
-		// Update sets
-		mAdapter.notifyDataSetChanged();
-	}
-
-	@Override
-	public void onElementSelectEntered(PreviewItemHolder holder) {
-		// Setting data needed for updating view
-		//mAdapter.setUpdateViewData(holder); // XXX Remove if not used. Probably won't be
+		// Value modified, set flag to true
+		sIsModified = true;
 
 		// Update sets
 		mAdapter.notifyDataSetChanged();
@@ -271,12 +271,31 @@ public class PreviewActivity extends ListActivity implements onNumberEnteredList
 		case R.id.menu_item_add_set:
 			// Minimize sets for look comfort
 			mAdapter.minimizeAll();
-			mAdapter.add(new Set(mAdapter.getCount()));
+
+			// Add a new set
+			Set newSet = new Set(mAdapter.getCount());
+			mAdapter.add(newSet);
+
+			// Scroll to new set
+			mItemsList.smoothScrollToPositionFromTop(newSet.getId(), 0);
+
+			// Fill flags at least up to the new set and then turn the new set's
+			// flag to true
+			mAdapter.fillExpandFlags(newSet.getId());
+			PreviewSetAdapter.sExpandedViews.set(newSet.getId(), Boolean.valueOf(true));
+			
+			// Value modified, set flag to true
+			sIsModified = true;
+
+			// Notify
 			mAdapter.notifyDataSetChanged();
 
 			break;
 		case R.id.menu_item_save:
 			mPresenter.save();
+
+			// After saving, reset flag.
+			sIsModified = false;
 
 			break;
 		case R.id.menu_item_save_as:
@@ -285,7 +304,7 @@ public class PreviewActivity extends ListActivity implements onNumberEnteredList
 
 			break;
 		case R.id.menu_item_undo:
-			if (PreviewSetAdapter.sUndoSet != null) {				
+			if (PreviewSetAdapter.sUndoSet != null) {
 				// Change undo icon to enable
 				mUndoIcon.setIcon(R.drawable.ic_content_undo);
 
@@ -296,26 +315,33 @@ public class PreviewActivity extends ListActivity implements onNumberEnteredList
 
 				// Reset undo set
 				PreviewSetAdapter.sUndoSet = null;
+				
+				// Value modified, set flag to true
+				sIsModified = true;
 
 				// Set undo to disable
 				setUndoMode(false);
 			}
 			break;
 		case R.id.menu_item_sort:
-			// Show handlers for edit mode. Then dragging and removing items is allowed, but expanding them is not
+			// Show handlers for edit mode. Then dragging and removing items is
+			// allowed, but expanding them is not
 			sEditListMode = !sEditListMode;
-			mAdapter.showHideSortHandler((sEditListMode) ? View.VISIBLE : View.GONE);
 			mController.setRemoveEnabled(sEditListMode);
-			mAdapter.lockExdends(!sEditListMode);
-			
+
+			// Resetting all expand flags
+			for (int i = 0; i < PreviewSetAdapter.sExpandedViews.size(); i++) {
+				PreviewSetAdapter.sExpandedViews.set(i, false);
+			}
+
 			// Also minimize items if entering edit mode
 			if (sEditListMode) {
 				mAdapter.minimizeAll();
 			}
-			
+
 			// Finally update views
 			mAdapter.notifyDataSetChanged();
-			
+
 			break;
 		default:
 			break;
@@ -338,46 +364,79 @@ public class PreviewActivity extends ListActivity implements onNumberEnteredList
 		mUndoIcon.setCheckable(enabled);
 	}
 
-	private void showMenu(View v) {
-		PopupMenu popupMenu = new PopupMenu(this, v);
-		popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-			@Override
-			public boolean onMenuItemClick(MenuItem item) {
-				switch (item.getItemId()) {
-				case (R.id.popup_menu_delete):
-					break;
-				case (R.id.popup_menu_move):
-				default:
-					break;
-				}
-				return true;
-			}
-		});
-		popupMenu.inflate(R.menu.preview_popup_menu);
-
-		popupMenu.show();
-	}
-
 	@Override
 	public void onPositionSelected(Set parent, int from, int to) {
 		// Get selected child Element from parent, move it to its new position
 		AElement item = (AElement) parent.getElements().get(from);
 		parent.getElements().remove(item);
 		parent.getElements().add(to, item);
+
+		// Value modified, set flag to true
+		sIsModified = true;
+
+		mAdapter.notifyDataSetChanged();
 	}
 
 	@Override
 	public void onBackPressed() {
-		// Warning for the user, could use a save flag in the future
-		// TODO Call a dialog that would ask the user if he would like to save
-		// first. If not, exit.
-		// If yes, check for file name. If exists, overwrite, if not ask for
-		// name input. (call save dialog)
-		super.onBackPressed();
+		if (sIsModified) {
+			// Ask for confirmation.. Will not save
+			// Set result and exit if confirmed
+			ConfirmDialog.newInstance(getString(R.string.exit_title), getString(R.string.exit_context) + " " + getTitle() + "?", "exitActivity", PreviewActivity.class).show(getFragmentManager(), null);
+		}
+		else {
+			// Simply exit, no questions asked
+			exitActivity();
+		}
+	}
+
+	public void exitActivity() {
+		// Set result with no intent, this activity was canceled
+		setResult(Activity.RESULT_CANCELED, null);
+
+		// Leaving activity
+		finish();
+	}
+
+	@Override
+	public void finish() {
+		// After using flag, reset it.
+		sIsModified = false;
+
+		super.finish();
 	}
 
 	@Override
 	public void onSaveCompleted(String workoutName) {
 		setTitle(workoutName);
+	}
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+		// Check for activity
+		switch (resultActivities.values()[requestCode]) {
+		case ELEMENTS_LIST:
+			// If data is valid
+			if ((data != null) && (resultCode == RESULT_OK)) {
+				Bundle b = data.getExtras();
+				Set modifiedSet = (Set) b.getSerializable(Consts.CURRENT_SET);
+
+				// Check for difference
+				if (!modifiedSet.equals(mAdapter.getSets().get(modifiedSet.getId()))) {
+					// Value modified, set flag to true
+					sIsModified = true;
+				}
+
+				// Set modified set in its place
+				mAdapter.getSets().set(modifiedSet.getId(), modifiedSet);
+
+				mAdapter.notifyDataSetChanged();
+			}
+
+			break;
+		default:
+			break;
+		}
 	}
 }

@@ -15,15 +15,9 @@ public class PreviewPresenter extends APresenter {
 
 	private PreviewActivity mCurrentView;
 
-	// private Set mWorkoutFatherSet = Globals.sFatherSet;
-
 	public PreviewPresenter(PreviewActivity context) {
 		// A presenter must hold a reference to its view
 		mCurrentView = context;
-	}
-
-	public void updateToolbar() {
-		// TODO Complete
 	}
 
 	public void save() {
