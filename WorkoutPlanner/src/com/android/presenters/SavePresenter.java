@@ -35,6 +35,9 @@ public class SavePresenter {
 			} else {
 				// Save the file
 				save();
+				
+				// Call save complete listeners to run their override
+				mCurrentView.mCallback.onSaveCompleted(mCurrentView.getWorkoutName());
 			}
 		} else {
 			// If no name was given, require one
@@ -48,15 +51,15 @@ public class SavePresenter {
 		// Remove existing file if there is
 		mCurrentView.getActivity().deleteFile(mCurrentView.getWorkoutName() + Consts.FILE_EXTENSION);  
 		
-		// Setting name to fatherSet
-		Globals.sFatherSet.setName(mCurrentView.getWorkoutName());
+		// Setting name to fatherExercise
+		Globals.sFatherExercise.setName(mCurrentView.getWorkoutName());
 		
 		// WRITING FILE
 		try {
 			XMLWorkoutWriter.WriteFile(
 					// XXX Decide if the current solution to the problem is
 					// a decent one
-					Globals.sFatherSet,
+					Globals.sFatherExercise,
 					mCurrentView.getActivity().openFileOutput(
 							mCurrentView.getWorkoutName()
 									+ Consts.FILE_EXTENSION,
@@ -93,7 +96,7 @@ public class SavePresenter {
 		// Check if there are any files at all
 		if (workoutFiles != null) {
 			for (String currentWorkout : workoutFiles) {
-				// If current workout has the same name as input set true and
+				// If current workout has the same name as input Exercise true and
 				// exit
 				if (currentWorkout.equals(mCurrentView.getWorkoutName()
 						+ Consts.FILE_EXTENSION)) {

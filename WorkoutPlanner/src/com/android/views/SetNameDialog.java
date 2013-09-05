@@ -65,9 +65,9 @@ public class SetNameDialog extends DialogFragment {
 		mSetName = new EditText(getActivity());
 		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
-		// Creating set name dialog. Making a text field with confirmation and
+		// Creating Exercise name dialog. Making a text field with confirmation and
 		// cancel buttons
-		builder.setTitle(R.string.set_name_label).setView(mSetName).setPositiveButton(R.string.dialog_ok, new DialogInterface.OnClickListener() {
+		builder.setTitle(R.string.exercise_name_label).setView(mSetName).setPositiveButton(R.string.dialog_ok, new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int id) {
 				// Check if there's any input at all or if the text size is to
 				// large

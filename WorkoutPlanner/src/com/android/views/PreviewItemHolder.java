@@ -8,7 +8,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import com.android.element.AElement;
-import com.android.element.Set;
+import com.android.element.Exercise;
 import java.util.ArrayList;
 
 public class PreviewItemHolder {
@@ -22,7 +22,7 @@ public class PreviewItemHolder {
 
 	// views for optimization
 	TextView nameLabel;
-	TextView repetitionsLabel;
+	TextView setsLabel;
 	EditText commentInput;
 	EditText soundInput;
 	CheckBox endlessInput;
@@ -34,41 +34,7 @@ public class PreviewItemHolder {
 	ImageView dragHandler;
 
 	// Other states
-	Set set;
-	
-	// Flags for views
-	boolean rePopulateFlag = false;
-	boolean updateFlag = false;
-	boolean minimizeFlag = false;
-	
-	boolean readMinimizeFlag() {
-		boolean result = minimizeFlag;
-		minimizeFlag = false;
-		
-		return result;
-		}
-	
-	// Read flag value and reset it
-	boolean readPopulateFlag() {
-		boolean result = rePopulateFlag;
-		rePopulateFlag = false;
-		
-		return result;
-	}
-	
-	// Read flag value and reset it
-	boolean readUpdateFlag() {
-		boolean result = updateFlag;
-		updateFlag = false;
-		
-		// Turning pop flag to true if inflate flag is true. This is because a newly inflated view must be popped.
-		// If the logic changes in some way that these flags don't come one after the other in this order, remove this line!!!
-		if (result) {
-			rePopulateFlag = true;
-		}
-		
-		return result;
-	}
+	Exercise exercise;
 }
 
 class PreviewElementHolder {

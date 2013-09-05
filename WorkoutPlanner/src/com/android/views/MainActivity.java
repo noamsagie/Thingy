@@ -23,4 +23,8 @@ public class MainActivity extends Activity {
 		Intent i = new Intent(getApplicationContext(), AboutActivity.class);
 		startActivity(i);
 	}
+
+	public void settingsPressed(View view) {
+		startActivity(new Intent(view.getContext(), SettingsActivity.class));
+	}
 }

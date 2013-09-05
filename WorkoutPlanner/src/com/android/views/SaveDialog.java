@@ -13,7 +13,7 @@ import com.android.presenters.SavePresenter;
 
 public class SaveDialog extends DialogFragment {
 
-	onSaveCompletedListener mCallback;
+	public onSaveCompletedListener mCallback;
 	
 	// Create text field
 	private EditText mWorkoutName;
@@ -53,8 +53,6 @@ public class SaveDialog extends DialogFragment {
 			public void onClick(DialogInterface dialog, int id) {
 				// Check if there's any input at all
 				presenter.processRequest();
-				
-				mCallback.onSaveCompleted(getWorkoutName());
 				
 				// Close keyboard
 				((InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE)).

@@ -16,7 +16,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
-import com.android.element.Set;
+import com.android.element.Exercise;
 import com.android.global.Consts;
 import com.android.global.Globals;
 import com.android.presenters.SelectWorkoutPresenter;
@@ -80,7 +80,7 @@ public class SelectWorkoutActivity extends ListActivity {
 		switch (item.getItemId()) {
 		case R.id.menu_create_new_workout:
 			// Start empty preview activity
-			Globals.sFatherSet = new Set(-1);
+			Globals.sFatherExercise = new Exercise(-1);
 			startActivityForResult(new Intent(this, PreviewActivity.class), resultActivities.PREVIEW_ACTIVITY.ordinal());
 			break;
 		default:

@@ -2,7 +2,7 @@ package com.android.presenters;
 
 import android.widget.Toast;
 import com.android.dal.XMLWorkoutReader;
-import com.android.element.Set;
+import com.android.element.Exercise;
 import com.android.global.Consts;
 import com.android.global.Globals;
 import com.android.views.PreviewActivity;
@@ -21,15 +21,15 @@ public class PreviewPresenter extends APresenter {
 	}
 
 	public void save() {
-		// Check for set name
-		if (Globals.sFatherSet.getName().equals("")) {
+		// Check for Exercise name
+		if (Globals.sFatherExercise.getName().equals("")) {
 			// If no name exists call save dialog to get name for file
 			SaveDialog save = new SaveDialog();
 			save.show(mCurrentView.getFragmentManager(), null);
 		}
 		else {
 			// Confirm overwrite
-			SaveConfirmDialog confirm = SaveConfirmDialog.newInstance(Globals.sFatherSet.getName());
+			SaveConfirmDialog confirm = SaveConfirmDialog.newInstance(Globals.sFatherExercise.getName());
 			confirm.show(mCurrentView.getFragmentManager(), null);
 		}
 	}
@@ -47,11 +47,11 @@ public class PreviewPresenter extends APresenter {
 	public void loadWorkoutData(String workoutName) {
 		// READING FILE
 		try {
-			Globals.sFatherSet = XMLWorkoutReader.ReadFile(mCurrentView.openFileInput(workoutName + Consts.FILE_EXTENSION));
+			Globals.sFatherExercise = XMLWorkoutReader.ReadFile(mCurrentView.openFileInput(workoutName + Consts.FILE_EXTENSION));
 
 			// Set id
-			for (int i = 0; i < Globals.sFatherSet.getElements().size(); i++) {
-				Globals.sFatherSet.getElements().get(i).setId(i);
+			for (int i = 0; i < Globals.sFatherExercise.getElements().size(); i++) {
+				Globals.sFatherExercise.getElements().get(i).setId(i);
 			}
 		} catch (XmlPullParserException e) {
 			Toast.makeText(mCurrentView, "Error reading file. Writing to log...", Toast.LENGTH_SHORT).show();
@@ -70,7 +70,7 @@ public class PreviewPresenter extends APresenter {
 
 	public void createNewWorkout() {
 		// Creating the first set for the user to work on
-		Globals.sFatherSet.getElements().add(new Set(0));
+		Globals.sFatherExercise.getElements().add(new Exercise(0));
 	}
 
 	public void removeElement() {
@@ -87,7 +87,7 @@ public class PreviewPresenter extends APresenter {
 	// care of logic this method is not needed and methods
 	// Such as CreateNewWorkout and LoadWorkoutData in PreviewActivity are to be
 	// removed!
-	public Set getFatherSet() {
-		return Globals.sFatherSet;
+	public Exercise getFatherSet() {
+		return Globals.sFatherExercise;
 	}
 }

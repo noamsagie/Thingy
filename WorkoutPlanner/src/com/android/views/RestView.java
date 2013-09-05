@@ -1,13 +1,12 @@
 package com.android.views;
 
-import android.view.ViewGroup;
-
 import android.app.Activity;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnFocusChangeListener;
+import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -34,7 +33,7 @@ public class RestView extends AElementView {
 			holder.soundInput = (EditText) convertView.findViewById(R.id.previewElementSound);
 			holder.timeLabel = (TextView) convertView.findViewById(R.id.previewElementTime);
 			holder.dragHandler = (ImageView) convertView.findViewById(R.id.drag_handle);
-			
+
 			// Set holder
 			convertView.setTag(holder);
 		}
@@ -42,7 +41,7 @@ public class RestView extends AElementView {
 			// Get holder from view
 			holder = (PreviewRestHolder) convertView.getTag();
 		}
-		
+
 		// Populate
 		mElement.setId(position);
 		holder.element = mElement;
@@ -50,7 +49,7 @@ public class RestView extends AElementView {
 		holder.commentInput.setText(mElement.getComment());
 		holder.soundInput.setText(mElement.getSound());
 		holder.timeLabel.setText(Double.toString(((Rest) mElement).getTime()));
-		
+
 		// Set listeners
 		holder.nameLabel.setOnClickListener(new OnClickListener() {
 			@Override
@@ -67,7 +66,7 @@ public class RestView extends AElementView {
 					// After focus is lost, save the text into the set
 					mElement.setComment(holder.commentInput.getText().toString());
 				}
-				
+
 				// Value modified, set flag to true
 				ElementsListActivity.sIsModified = true;
 			}
@@ -81,7 +80,7 @@ public class RestView extends AElementView {
 					// After focus is lost, save the text into the set
 					mElement.setSound(holder.soundInput.getText().toString());
 				}
-				
+
 				// Value modified, set flag to true
 				ElementsListActivity.sIsModified = true;
 			}
@@ -99,7 +98,7 @@ public class RestView extends AElementView {
 				instance.show(((Activity) mContext).getFragmentManager(), null);
 			}
 		});
-		
+
 		// Set holder visibility
 		holder.dragHandler.setVisibility((ElementsListActivity.sEditListMode) ? View.VISIBLE : View.GONE);
 
@@ -109,5 +108,10 @@ public class RestView extends AElementView {
 	public RestView(Rest element, Context context) {
 		super(context);
 		mElement = element;
+	}
+
+	public RestView(RestView toClone) {
+		super(toClone.mContext);
+		mElement = new Rest((Rest) toClone.mElement);
 	}
 }

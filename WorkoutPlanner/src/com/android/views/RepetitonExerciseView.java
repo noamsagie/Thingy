@@ -1,13 +1,12 @@
 package com.android.views;
 
-import android.view.ViewGroup;
-
 import android.app.Activity;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnFocusChangeListener;
+import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -180,5 +179,10 @@ public class RepetitonExerciseView extends AElementView {
 	public RepetitonExerciseView(RepetitionExercise element, Context context) {
 		super(context);
 		mElement = element;
+	}
+	
+	public RepetitonExerciseView(RepetitonExerciseView toClone) {
+		super(toClone.mContext);
+		mElement = new RepetitionExercise((RepetitionExercise)toClone.mElement);
 	}
 }

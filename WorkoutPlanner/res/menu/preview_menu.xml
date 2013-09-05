@@ -5,7 +5,7 @@
         android:id="@+id/menu_item_add_set"
         android:icon="@drawable/ic_menu_add"
         android:showAsAction="always"
-        android:title="@string/menu_item_add_set"/>
+        android:title="@string/menu_item_add_exercise"/>
     <item
         android:id="@+id/menu_item_save_as"
         android:showAsAction="never"

@@ -11,7 +11,7 @@ import android.view.MenuItem;
 import android.widget.Toast;
 import com.android.element.AElement;
 import com.android.element.RepetitionExercise;
-import com.android.element.Set;
+import com.android.element.Exercise;
 import com.android.global.Consts;
 import com.android.global.Consts.resultActivities;
 import com.android.global.Globals;
@@ -26,7 +26,7 @@ import com.mobeta.android.dslv.DragSortListView;
 public class PreviewActivity extends ListActivity implements onNumberEnteredListener, onNameEnteredListener, onPositionSelectedListener, onSaveCompletedListener {
 
 	PreviewPresenter mPresenter;
-	PreviewSetAdapter mAdapter;
+	PreviewExerciseAdapter mAdapter;
 	MenuItem mUndoIcon;
 	DragSortListView mItemsList;
 	DragSortController mController;
@@ -95,7 +95,7 @@ public class PreviewActivity extends ListActivity implements onNumberEnteredList
 			 */
 			for (AElement currSet : mPresenter.getFatherSet().getElements()) {
 				// Validate data. If one element is not set, exit
-				if (!(currSet instanceof Set)) {
+				if (!(currSet instanceof Exercise)) {
 					// If an element of the father set is not a set, inform user
 					// and
 					// return to previous activity
@@ -109,13 +109,13 @@ public class PreviewActivity extends ListActivity implements onNumberEnteredList
 			int length = savedInstanceState.getInt(KEY_SETS_LIST_SIZE);
 
 			for (int i = 0; i < length; i++) {
-				mPresenter.getFatherSet().getElements().add((Set) savedInstanceState.getSerializable(KEY_SERIALIZABLE_SET + i));
+				mPresenter.getFatherSet().getElements().add((Exercise) savedInstanceState.getSerializable(KEY_SERIALIZABLE_SET + i));
 			}
 		}
 
 		// Set the adapter in the list view. The adapter should update the
 		// listview automatically with it's getView method
-		mAdapter = new PreviewSetAdapter(this, R.layout.preview_element_set, Globals.sFatherSet.getElements());
+		mAdapter = new PreviewExerciseAdapter(this, R.layout.preview_element_exercise, Globals.sFatherExercise.getElements());
 		mItemsList = (DragSortListView) findViewById(android.R.id.list);
 
 		mItemsList.setAdapter(mAdapter);
@@ -132,7 +132,7 @@ public class PreviewActivity extends ListActivity implements onNumberEnteredList
 		@Override
 		public void drop(int from, int to) {
 			if (from != to) {
-				Set item = (Set) mAdapter.getItem(from);
+				Exercise item = (Exercise) mAdapter.getItem(from);
 				mAdapter.remove(item);
 				mAdapter.insert(item, to);
 
@@ -149,10 +149,9 @@ public class PreviewActivity extends ListActivity implements onNumberEnteredList
 		@Override
 		public void remove(int which) {
 			// Save to undo before removing
-			PreviewSetAdapter.sUndoSet = new Set((Set) mAdapter.getItem(which));
-
-			// FIXME NOT WORKING...
-			// mAdapter.setUpdateViewData(PreviewSetAdapter.sHolders.get(PreviewSetAdapter.sHolders.indexOf(mAdapter.getSets().get(which))));
+			PreviewExerciseAdapter.sUndoSet = new Exercise((Exercise) mAdapter.getItem(which));
+			
+			setUndoMode(true);
 
 			// Value modified, set flag to true
 			sIsModified = true;
@@ -195,16 +194,16 @@ public class PreviewActivity extends ListActivity implements onNumberEnteredList
 	public void onNumericInputEntered(AElement element) {
 		// Check if a set was edited. If so, assuming it was the repetitions
 		// value!
-		if (element instanceof Set) {
+		if (element instanceof Exercise) {
 			// Turn endless to false if not already false
-			((Set) element).setEndless(false);
+			((Exercise) element).setEndless(false);
 
 			// Check for repetition exercises
-			for (AElement curr : ((Set) element).getElements()) {
+			for (AElement curr : ((Exercise) element).getElements()) {
 				if (curr instanceof RepetitionExercise) {
 					// Add/Remove rep/weight values so the lists' size would
 					// match set repetition value
-					int length = ((RepetitionExercise) curr).getReps().size() - ((Set) element).getRepetitions();
+					int length = ((RepetitionExercise) curr).getReps().size() - ((Exercise) element).getSets();
 					int listLength = ((RepetitionExercise) curr).getReps().size();
 					boolean isListSizeLarger = length >= 0;
 
@@ -273,7 +272,7 @@ public class PreviewActivity extends ListActivity implements onNumberEnteredList
 			mAdapter.minimizeAll();
 
 			// Add a new set
-			Set newSet = new Set(mAdapter.getCount());
+			Exercise newSet = new Exercise(mAdapter.getCount());
 			mAdapter.add(newSet);
 
 			// Scroll to new set
@@ -282,7 +281,7 @@ public class PreviewActivity extends ListActivity implements onNumberEnteredList
 			// Fill flags at least up to the new set and then turn the new set's
 			// flag to true
 			mAdapter.fillExpandFlags(newSet.getId());
-			PreviewSetAdapter.sExpandedViews.set(newSet.getId(), Boolean.valueOf(true));
+			PreviewExerciseAdapter.sExpandedViews.set(newSet.getId(), Boolean.valueOf(true));
 			
 			// Value modified, set flag to true
 			sIsModified = true;
@@ -304,17 +303,17 @@ public class PreviewActivity extends ListActivity implements onNumberEnteredList
 
 			break;
 		case R.id.menu_item_undo:
-			if (PreviewSetAdapter.sUndoSet != null) {
+			if (PreviewExerciseAdapter.sUndoSet != null) {
 				// Change undo icon to enable
 				mUndoIcon.setIcon(R.drawable.ic_content_undo);
 
 				// Inserting and refreshing
-				mAdapter.insert(PreviewSetAdapter.sUndoSet, PreviewSetAdapter.sUndoSet.getId());
+				mAdapter.insert(PreviewExerciseAdapter.sUndoSet, PreviewExerciseAdapter.sUndoSet.getId());
 
 				mAdapter.notifyDataSetChanged();
 
 				// Reset undo set
-				PreviewSetAdapter.sUndoSet = null;
+				PreviewExerciseAdapter.sUndoSet = null;
 				
 				// Value modified, set flag to true
 				sIsModified = true;
@@ -330,8 +329,8 @@ public class PreviewActivity extends ListActivity implements onNumberEnteredList
 			mController.setRemoveEnabled(sEditListMode);
 
 			// Resetting all expand flags
-			for (int i = 0; i < PreviewSetAdapter.sExpandedViews.size(); i++) {
-				PreviewSetAdapter.sExpandedViews.set(i, false);
+			for (int i = 0; i < PreviewExerciseAdapter.sExpandedViews.size(); i++) {
+				PreviewExerciseAdapter.sExpandedViews.set(i, false);
 			}
 
 			// Also minimize items if entering edit mode
@@ -365,7 +364,7 @@ public class PreviewActivity extends ListActivity implements onNumberEnteredList
 	}
 
 	@Override
-	public void onPositionSelected(Set parent, int from, int to) {
+	public void onPositionSelected(Exercise parent, int from, int to) {
 		// Get selected child Element from parent, move it to its new position
 		AElement item = (AElement) parent.getElements().get(from);
 		parent.getElements().remove(item);
@@ -420,7 +419,7 @@ public class PreviewActivity extends ListActivity implements onNumberEnteredList
 			// If data is valid
 			if ((data != null) && (resultCode == RESULT_OK)) {
 				Bundle b = data.getExtras();
-				Set modifiedSet = (Set) b.getSerializable(Consts.CURRENT_SET);
+				Exercise modifiedSet = (Exercise) b.getSerializable(Consts.CURRENT_EXERCISE);
 
 				// Check for difference
 				if (!modifiedSet.equals(mAdapter.getSets().get(modifiedSet.getId()))) {
@@ -428,7 +427,7 @@ public class PreviewActivity extends ListActivity implements onNumberEnteredList
 					sIsModified = true;
 				}
 
-				// Set modified set in its place
+				// Set modified Exercise in its place
 				mAdapter.getSets().set(modifiedSet.getId(), modifiedSet);
 
 				mAdapter.notifyDataSetChanged();

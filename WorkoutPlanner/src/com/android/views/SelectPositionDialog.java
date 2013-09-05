@@ -5,14 +5,14 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.os.Bundle;
-import com.android.element.Set;
+import com.android.element.Exercise;
 
 public class SelectPositionDialog extends DialogFragment {
 	
 	onPositionSelectedListener mCallback;
-	private static Set sParent;
+	private static Exercise sParent;
 	
-	public static SelectPositionDialog newInstance(Set parent) {
+	public static SelectPositionDialog newInstance(Exercise parent) {
 		final SelectPositionDialog frag = new SelectPositionDialog();
 		sParent = parent;
 		return frag;
@@ -31,7 +31,7 @@ public class SelectPositionDialog extends DialogFragment {
 	
 	// Container Activity must implement this interface
 	public interface onPositionSelectedListener {
-		public void onPositionSelected(Set parent, int from, int to);
+		public void onPositionSelected(Exercise parent, int from, int to);
 	}
 	
 	@Override

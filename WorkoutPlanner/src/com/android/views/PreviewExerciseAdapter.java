@@ -1,13 +1,5 @@
 package com.android.views;
 
-import com.android.element.RepetitionExercise;
-
-import com.android.element.Rest;
-
-import com.android.element.TimeExercise;
-
-import android.widget.LinearLayout.LayoutParams;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -25,24 +17,28 @@ import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.LinearLayout.LayoutParams;
 import android.widget.TextView;
 import com.android.element.AElement;
-import com.android.element.Set;
+import com.android.element.Exercise;
+import com.android.element.RepetitionExercise;
+import com.android.element.Rest;
+import com.android.element.TimeExercise;
 import com.android.global.Consts;
 import com.android.global.Consts.resultActivities;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PreviewSetAdapter extends ArrayAdapter<AElement> {
+public class PreviewExerciseAdapter extends ArrayAdapter<AElement> {
 
 	// private static final String TAG = "WorkoutPlanner_PreviewSetAdapter";
-	private ArrayList<AElement> mSets;
-	static Set sUndoSet;
+	private ArrayList<AElement> mExercises;
+	static Exercise sUndoSet;
 	static ArrayList<Boolean> sExpandedViews = new ArrayList<Boolean>();
 
-	public PreviewSetAdapter(Context context, int textViewResourceId, List<AElement> sets) {
+	public PreviewExerciseAdapter(Context context, int textViewResourceId, List<AElement> sets) {
 		super(context, textViewResourceId, sets);
-		mSets = (ArrayList<AElement>) sets;
+		mExercises = (ArrayList<AElement>) sets;
 	}
 
 	@Override
@@ -78,18 +74,18 @@ public class PreviewSetAdapter extends ArrayAdapter<AElement> {
 	private View newView(ViewGroup parent, int position) {
 		// Getting view somehow...
 		LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		View inflatedView = inflater.inflate(R.layout.preview_element_set, parent, false);
+		View inflatedView = inflater.inflate(R.layout.preview_element_exercise, parent, false);
 		PreviewItemHolder holder = new PreviewItemHolder();
 
 		// Set a Set in the holder. It may be a different Set than the previous,
 		// according to position
-		holder.set = (Set) mSets.get(position);
+		holder.exercise = (Exercise) mExercises.get(position);
 
 		// Set position of the set into id for later use. Very important
-		holder.set.setId(position);
+		holder.exercise.setId(position);
 		holder.expandArea = (View) inflatedView.findViewById(R.id.expandArea);
 		holder.data = (LinearLayout) inflatedView.findViewById(R.id.previewData);
-		holder.repetitionsLabel = (TextView) inflatedView.findViewById(R.id.previewRepetitionsInput);
+		holder.setsLabel = (TextView) inflatedView.findViewById(R.id.previewRepetitionsInput);
 		holder.endlessInput = (CheckBox) inflatedView.findViewById(R.id.previewSetEndlessInput);
 		holder.nameLabel = (TextView) inflatedView.findViewById(R.id.previewSetNameLabel);
 		holder.commentInput = (EditText) inflatedView.findViewById(R.id.previewSetCommentInput);
@@ -107,14 +103,14 @@ public class PreviewSetAdapter extends ArrayAdapter<AElement> {
 	private void bindView(int position, View inflatedView) {
 		final PreviewItemHolder holder = (PreviewItemHolder) inflatedView.getTag();
 
-		holder.set = (Set) mSets.get(position);
+		holder.exercise = (Exercise) mExercises.get(position);
 
 		// Set position of the set into id for later use. Very important
-		holder.set.setId(position);
-		holder.endlessInput.setChecked(holder.set.getEndless());
-		holder.soundInput.setText(holder.set.getSound());
-		holder.nameLabel.setText(holder.set.getName());
-		holder.commentInput.setText(holder.set.getComment());
+		holder.exercise.setId(position);
+		holder.endlessInput.setChecked(holder.exercise.getEndless());
+		holder.soundInput.setText(holder.exercise.getSound());
+		holder.nameLabel.setText(holder.exercise.getName());
+		holder.commentInput.setText(holder.exercise.getComment());
 
 		// Setting visibility of the drag handler
 		holder.dragHandler.setVisibility((PreviewActivity.sEditListMode) ? View.VISIBLE : View.GONE);
@@ -125,15 +121,15 @@ public class PreviewSetAdapter extends ArrayAdapter<AElement> {
 		// Make sure there is a name. If none, put default: Exercise - index
 		// value (+1 for readability)
 		if (holder.nameLabel.getText().equals("")) {
-			holder.nameLabel.setText(getContext().getString(R.string.default_set_name) + " " + Integer.toString(holder.set.getId() + 1));
+			holder.nameLabel.setText(getContext().getString(R.string.default_exercise_name) + " " + Integer.toString(holder.exercise.getId() + 1));
 		}
 
 		// Set repetitions value according to the endless flag
-		if (holder.set.getEndless()) {
-			holder.repetitionsLabel.setText(R.string.infinity);
+		if (holder.exercise.getEndless()) {
+			holder.setsLabel.setText(R.string.infinity);
 		}
 		else {
-			holder.repetitionsLabel.setText(String.valueOf(holder.set.getRepetitions()));
+			holder.setsLabel.setText(String.valueOf(holder.exercise.getSets()));
 		}
 
 		// Set click listeners
@@ -143,15 +139,15 @@ public class PreviewSetAdapter extends ArrayAdapter<AElement> {
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 
 				// Save endless flag
-				holder.set.setEndless(isChecked);
+				holder.exercise.setEndless(isChecked);
 
 				// If an endless set - Dropset
 				if (isChecked) {
-					holder.repetitionsLabel.setText(R.string.infinity);
+					holder.setsLabel.setText(R.string.infinity);
 				}
 				else {
 					// Regular set
-					holder.repetitionsLabel.setText(String.valueOf(holder.set.getRepetitions()));
+					holder.setsLabel.setText(String.valueOf(holder.exercise.getSets()));
 				}
 
 				// Value modified, set flag to true
@@ -160,12 +156,10 @@ public class PreviewSetAdapter extends ArrayAdapter<AElement> {
 
 		});
 
-		holder.repetitionsLabel.setOnClickListener(new OnClickListener() {
+		holder.setsLabel.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				// Setting flag to true to allow populating this view
-				holder.updateFlag = true;
-				NumericDialog instance = NumericDialog.newInstance(holder.set, NumericDialog.INTEGER_MODE, Consts.SET_REPETITIONS_METHOD_NAME);
+				NumericDialog instance = NumericDialog.newInstance(holder.exercise, NumericDialog.INTEGER_MODE, Consts.SET_SETS_METHOD_NAME);
 				instance.show(((Activity) getContext()).getFragmentManager(), null);
 			}
 		});
@@ -173,9 +167,7 @@ public class PreviewSetAdapter extends ArrayAdapter<AElement> {
 		holder.nameLabel.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				// Setting flag to true to allow updating this view
-				holder.rePopulateFlag = true;
-				SetNameDialog instance = SetNameDialog.newInstance(holder.set);
+				SetNameDialog instance = SetNameDialog.newInstance(holder.exercise);
 				instance.show(((Activity) getContext()).getFragmentManager(), null);
 			}
 		});
@@ -185,7 +177,7 @@ public class PreviewSetAdapter extends ArrayAdapter<AElement> {
 			public void onFocusChange(View v, boolean hasFocus) {
 				if (!hasFocus) {
 					// After focus is lost, save the text into the set
-					holder.set.setComment(holder.commentInput.getText().toString());
+					holder.exercise.setComment(holder.commentInput.getText().toString());
 				}
 
 				// Value modified, set flag to true
@@ -199,7 +191,7 @@ public class PreviewSetAdapter extends ArrayAdapter<AElement> {
 			public void onFocusChange(View v, boolean hasFocus) {
 				if (!hasFocus) {
 					// After focus is lost, save the text into the set
-					holder.set.setSound(holder.soundInput.getText().toString());
+					holder.exercise.setSound(holder.soundInput.getText().toString());
 				}
 
 				// Value modified, set flag to true
@@ -216,10 +208,10 @@ public class PreviewSetAdapter extends ArrayAdapter<AElement> {
 				holder.collapse.setVisibility(View.VISIBLE);
 
 				// Save expand mode
-				sExpandedViews.set(holder.set.getId(), true);
+				sExpandedViews.set(holder.exercise.getId(), true);
 
 				// Move screen to current item
-				((PreviewActivity) getContext()).mItemsList.smoothScrollToPositionFromTop(holder.set.getId(), 0);
+				((PreviewActivity) getContext()).mItemsList.smoothScrollToPositionFromTop(holder.exercise.getId(), 0);
 			}
 		});
 
@@ -232,7 +224,7 @@ public class PreviewSetAdapter extends ArrayAdapter<AElement> {
 				holder.expand.setVisibility(View.VISIBLE);
 
 				// Save expand mode
-				sExpandedViews.set(holder.set.getId(), false);
+				sExpandedViews.set(holder.exercise.getId(), false);
 			}
 		});
 
@@ -244,7 +236,7 @@ public class PreviewSetAdapter extends ArrayAdapter<AElement> {
 				// to edit elements of the selected set
 				Intent intent = new Intent();
 				intent.setClass(getContext(), ElementsListActivity.class);
-				intent.putExtra(Consts.CURRENT_SET, holder.set);
+				intent.putExtra(Consts.CURRENT_EXERCISE, holder.exercise);
 				((Activity) getContext()).startActivityForResult(intent, resultActivities.ELEMENTS_LIST.ordinal());
 			}
 		});
@@ -259,7 +251,7 @@ public class PreviewSetAdapter extends ArrayAdapter<AElement> {
 		holder.data.removeAllViews();
 
 		// Go over elements and add the name of each to the display
-		for (int i = 0; i < holder.set.getElements().size(); i++) {
+		for (int i = 0; i < holder.exercise.getElements().size(); i++) {
 			LinearLayout elementDisplay = new LinearLayout(getContext());
 			TextView elementName = new TextView(getContext());
 
@@ -269,17 +261,19 @@ public class PreviewSetAdapter extends ArrayAdapter<AElement> {
 			elementName.setTextAppearance(getContext(), R.style.smaller_bold);
 
 			// Set text. If empty use default
-			if (holder.set.getElements().get(i).getName().equals("")) {
-				if (holder.set.getElements().get(i) instanceof TimeExercise) {
+			if (holder.exercise.getElements().get(i).getName().equals("")) {
+				if (holder.exercise.getElements().get(i) instanceof TimeExercise) {
 					elementName.setText(R.string.new_element_time);
-				} else if (holder.set.getElements().get(i) instanceof Rest) {
+				}
+				else if (holder.exercise.getElements().get(i) instanceof Rest) {
 					elementName.setText(R.string.new_element_rest);
-				} else if (holder.set.getElements().get(i) instanceof RepetitionExercise) {
+				}
+				else if (holder.exercise.getElements().get(i) instanceof RepetitionExercise) {
 					elementName.setText(R.string.new_element_repetitions);
 				}
 			}
 			else {
-				elementName.setText(holder.set.getElements().get(i).getName());
+				elementName.setText(holder.exercise.getElements().get(i).getName());
 			}
 
 			elementDisplay.addView(elementName);
@@ -290,8 +284,8 @@ public class PreviewSetAdapter extends ArrayAdapter<AElement> {
 
 	public void resetIds() {
 		// Reset Id to match position if position has changed
-		for (int i = 0; i < mSets.size(); i++) {
-			mSets.get(i).setId(i);
+		for (int i = 0; i < mExercises.size(); i++) {
+			mExercises.get(i).setId(i);
 		}
 	}
 
@@ -328,6 +322,6 @@ public class PreviewSetAdapter extends ArrayAdapter<AElement> {
 	}
 
 	public ArrayList<AElement> getSets() {
-		return mSets;
+		return mExercises;
 	}
 }

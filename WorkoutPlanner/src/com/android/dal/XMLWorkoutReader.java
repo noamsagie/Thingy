@@ -1,9 +1,9 @@
 package com.android.dal;
 
 import com.android.element.AElement;
+import com.android.element.Exercise;
 import com.android.element.RepetitionExercise;
 import com.android.element.Rest;
-import com.android.element.Set;
 import com.android.element.TimeExercise;
 import com.android.global.Consts;
 import java.io.ByteArrayInputStream;
@@ -23,16 +23,15 @@ public class XMLWorkoutReader {
 	 * 
 	 * @param fileName
 	 *            Name of the XML file.
-	 * @return The Set containing the entire workout.
+	 * @return The Exercise containing the entire workout.
 	 * @throws XmlPullParserException
 	 * @throws IOException
 	 * @throws NumberFormatException
 	 */
-	public static Set ReadFile(FileInputStream fis)
-			throws XmlPullParserException, IOException, NumberFormatException {
+	public static Exercise ReadFile(FileInputStream fis) throws XmlPullParserException, IOException, NumberFormatException {
 
-		// Set variables
-		Set result = new Set(-1);
+		// Exercise variables
+		Exercise result = new Exercise(-1);
 		InputStreamReader isr = null;
 
 		// Read stream
@@ -47,47 +46,50 @@ public class XMLWorkoutReader {
 		 * Converting the String data to XML format so that the parser would
 		 * understand it as an XML input.
 		 */
-		InputStream is = new ByteArrayInputStream(
-				data.getBytes(Consts.XML_FILE_HEADER));
+		InputStream is = new ByteArrayInputStream(data.getBytes(Consts.XML_FILE_HEADER));
 
 		// Setup xml reader
 		XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
 		factory.setNamespaceAware(true);
 		XmlPullParser xpp = factory.newPullParser();
 		xpp.setInput(is, null);
-		
+
 		result = parseSet(xpp);
 
 		return result;
 	}
 
-	private static Set parseSet(XmlPullParser xpp)
-			throws XmlPullParserException, IOException, NumberFormatException {
-		Set result = new Set(-1);
+	private static Exercise parseSet(XmlPullParser xpp) throws XmlPullParserException, IOException, NumberFormatException {
+		Exercise result = new Exercise(-1);
 
-		// Go over current set tag
+		// Go over current Exercise tag
 		while (xpp.next() != XmlPullParser.END_TAG) {
 			String name = xpp.getName();
 
 			// Validate name
 			if (name != null) {
-				// Reading attributes of set
-				if (name.equals(Consts.XML_TAG_SET_REPETITIONS)) {
-					// Set repetitions
-					result.setRepetitions(Integer.parseInt(readText(xpp)));
-				} else if (name.equals(Consts.XML_TAG_SET_ENDLESS)) {
+				// Reading attributes of Exercise
+				if (name.equals(Consts.XML_TAG_EXERCISE_SETS)) {
+					// Set sets
+					result.setSets(Integer.parseInt(readText(xpp)));
+				}
+				else if (name.equals(Consts.XML_TAG_EXERCISE_ENDLESS)) {
 					// Set endless
 					result.setEndless(Boolean.parseBoolean(readText(xpp)));
-				} else if (name.equals(Consts.XML_TAG_ELEMENT_NAME)) {
+				}
+				else if (name.equals(Consts.XML_TAG_ELEMENT_NAME)) {
 					// Set name
 					result.setName(readText(xpp));
-				} else if (name.equals(Consts.XML_TAG_ELEMENT_COMMENT)) {
+				}
+				else if (name.equals(Consts.XML_TAG_ELEMENT_COMMENT)) {
 					// Set comment
 					result.setComment(readText(xpp));
-				} else if (name.equals(Consts.XML_TAG_ELEMENT_SOUND)) {
+				}
+				else if (name.equals(Consts.XML_TAG_ELEMENT_SOUND)) {
 					// Set sound file path
 					result.setSound(readText(xpp));
-				} else if (name.equals(Consts.XML_TAG_SET_ELEMENTS)) {
+				}
+				else if (name.equals(Consts.XML_TAG_EXERCISE_ELEMENTS)) {
 					// Set elements
 					result.setElements(parseElements(xpp));
 				}
@@ -97,11 +99,10 @@ public class XMLWorkoutReader {
 		return result;
 	}
 
-	private static ArrayList<AElement> parseElements(XmlPullParser xpp)
-			throws XmlPullParserException, IOException {
+	private static ArrayList<AElement> parseElements(XmlPullParser xpp) throws XmlPullParserException, IOException {
 		ArrayList<AElement> result = new ArrayList<AElement>();
 
-		// Go over elements of current set
+		// Go over elements of current Exercise
 		while (xpp.next() != XmlPullParser.END_TAG) {
 			String name = xpp.getName();
 
@@ -111,14 +112,17 @@ public class XMLWorkoutReader {
 				if (name.equals(Consts.XML_TAG_REPETITION_EXERCISE)) {
 					// Add repetition exercise
 					result.add(parseRepetitionExercise(xpp));
-				} else if (name.equals(Consts.XML_TAG_REST)) {
+				}
+				else if (name.equals(Consts.XML_TAG_REST)) {
 					// Add rest
 					result.add(parseRest(xpp));
-				} else if (name.equals(Consts.XML_TAG_TIME_EXERCISE)) {
+				}
+				else if (name.equals(Consts.XML_TAG_TIME_EXERCISE)) {
 					// Add time exercise
 					result.add(parseTimeExercise(xpp));
-				} else if (name.equals(Consts.XML_TAG_SET)) {
-					// Add set
+				}
+				else if (name.equals(Consts.XML_TAG_EXERCISE)) {
+					// Add Exercise
 					result.add(parseSet(xpp));
 				}
 			}
@@ -127,8 +131,7 @@ public class XMLWorkoutReader {
 		return result;
 	}
 
-	private static Rest parseRest(XmlPullParser xpp)
-			throws XmlPullParserException, IOException, NumberFormatException {
+	private static Rest parseRest(XmlPullParser xpp) throws XmlPullParserException, IOException, NumberFormatException {
 		Rest result = new Rest();
 
 		// Go over attributes of current rest
@@ -141,13 +144,16 @@ public class XMLWorkoutReader {
 				if (name.equals(Consts.XML_TAG_ELEMENT_NAME)) {
 					// Set name
 					result.setName(readText(xpp));
-				} else if (name.equals(Consts.XML_TAG_ELEMENT_COMMENT)) {
+				}
+				else if (name.equals(Consts.XML_TAG_ELEMENT_COMMENT)) {
 					// Set comment
 					result.setComment(readText(xpp));
-				} else if (name.equals(Consts.XML_TAG_ELEMENT_SOUND)) {
+				}
+				else if (name.equals(Consts.XML_TAG_ELEMENT_SOUND)) {
 					// Set sound file path
 					result.setSound(readText(xpp));
-				} else if (name.equals(Consts.XML_TAG_ELEMENT_TIME)) {
+				}
+				else if (name.equals(Consts.XML_TAG_ELEMENT_TIME)) {
 					// Set time
 					result.setTime(Double.parseDouble(readText(xpp)));
 				}
@@ -157,8 +163,7 @@ public class XMLWorkoutReader {
 		return result;
 	}
 
-	private static RepetitionExercise parseRepetitionExercise(XmlPullParser xpp)
-			throws XmlPullParserException, IOException {
+	private static RepetitionExercise parseRepetitionExercise(XmlPullParser xpp) throws XmlPullParserException, IOException {
 		RepetitionExercise result = new RepetitionExercise();
 
 		// Go over attributes of current repetition exercise
@@ -171,21 +176,25 @@ public class XMLWorkoutReader {
 				if (name.equals(Consts.XML_TAG_ELEMENT_NAME)) {
 					// Set name
 					result.setName(readText(xpp));
-				} else if (name.equals(Consts.XML_TAG_ELEMENT_COMMENT)) {
+				}
+				else if (name.equals(Consts.XML_TAG_ELEMENT_COMMENT)) {
 					// Set comment
 					result.setComment(readText(xpp));
-				} else if (name.equals(Consts.XML_TAG_ELEMENT_SOUND)) {
+				}
+				else if (name.equals(Consts.XML_TAG_ELEMENT_SOUND)) {
 					// Set sound file path
 					result.setSound(readText(xpp));
-				} else if (name.equals(Consts.XML_TAG_REPETITION_EXERCISE_DATA)) {
+				}
+				else if (name.equals(Consts.XML_TAG_REPETITION_EXERCISE_DATA)) {
 					// Set reps and weights data
 					while (xpp.next() != XmlPullParser.END_TAG) {
 						name = xpp.getName();
-						
+
 						if (name.equals(Consts.XML_TAG_REPETITION_EXERCISE_REPS)) {
 							// Set reps
 							result.getReps().add(Integer.parseInt(readText(xpp)));
-						} else if (name.equals(Consts.XML_TAG_REPETITION_EXERCISE_WEIGHTS)) {
+						}
+						else if (name.equals(Consts.XML_TAG_REPETITION_EXERCISE_WEIGHTS)) {
 							// Set weights
 							result.getWeights().add(Double.parseDouble(readText(xpp)));
 						}
@@ -197,8 +206,7 @@ public class XMLWorkoutReader {
 		return result;
 	}
 
-	private static TimeExercise parseTimeExercise(XmlPullParser xpp)
-			throws XmlPullParserException, IOException, NumberFormatException {
+	private static TimeExercise parseTimeExercise(XmlPullParser xpp) throws XmlPullParserException, IOException, NumberFormatException {
 		TimeExercise result = new TimeExercise();
 
 		// Go over attributes of current time exercise
@@ -211,13 +219,16 @@ public class XMLWorkoutReader {
 				if (name.equals(Consts.XML_TAG_ELEMENT_NAME)) {
 					// Set name
 					result.setName(readText(xpp));
-				} else if (name.equals(Consts.XML_TAG_ELEMENT_COMMENT)) {
+				}
+				else if (name.equals(Consts.XML_TAG_ELEMENT_COMMENT)) {
 					// Set comment
 					result.setComment(readText(xpp));
-				} else if (name.equals(Consts.XML_TAG_ELEMENT_SOUND)) {
+				}
+				else if (name.equals(Consts.XML_TAG_ELEMENT_SOUND)) {
 					// Set sound file path
 					result.setSound(readText(xpp));
-				} else if (name.equals(Consts.XML_TAG_ELEMENT_TIME)) {
+				}
+				else if (name.equals(Consts.XML_TAG_ELEMENT_TIME)) {
 					// Set time
 					result.setTime(Double.parseDouble(readText(xpp)));
 				}
@@ -228,8 +239,7 @@ public class XMLWorkoutReader {
 	}
 
 	// Extracts text values.
-	private static String readText(XmlPullParser xpp) throws IOException,
-			XmlPullParserException {
+	private static String readText(XmlPullParser xpp) throws IOException, XmlPullParserException {
 		String result = "";
 
 		if (xpp.next() == XmlPullParser.TEXT) {

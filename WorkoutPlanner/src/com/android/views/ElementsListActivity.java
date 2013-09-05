@@ -17,7 +17,7 @@ import android.widget.TextView;
 import com.android.element.AElement;
 import com.android.element.RepetitionExercise;
 import com.android.element.Rest;
-import com.android.element.Set;
+import com.android.element.Exercise;
 import com.android.element.TimeExercise;
 import com.android.global.Consts;
 import com.android.presenters.ElementsListPresenter;
@@ -35,7 +35,7 @@ public class ElementsListActivity extends ListActivity implements onElementSelec
 	MenuItem mUndoIcon;
 	DragSortListView mItemsList;
 	DragSortController mController;
-	Set mFather;
+	Exercise mFather;
 	LinearLayout mHeader;
 
 	public static boolean sIsModified = false;
@@ -67,14 +67,14 @@ public class ElementsListActivity extends ListActivity implements onElementSelec
 
 		if (savedInstanceState == null) {
 			// Get father set from intent
-			mFather = (Set) getIntent().getSerializableExtra(Consts.CURRENT_SET);
+			mFather = (Exercise) getIntent().getSerializableExtra(Consts.CURRENT_EXERCISE);
 		}
 		else {
 			// Read sets from the saved state via serializable
 			int length = savedInstanceState.getInt(KEY_ELEMENTS_LIST_SIZE);
 
 			for (int i = 0; i < length; i++) {
-				mFather.getElements().add((Set) savedInstanceState.getSerializable(KEY_SERIALIZABLE_ELEMENT + i));
+				mFather.getElements().add((Exercise) savedInstanceState.getSerializable(KEY_SERIALIZABLE_ELEMENT + i));
 			}
 		}
 
@@ -117,7 +117,7 @@ public class ElementsListActivity extends ListActivity implements onElementSelec
 		setReps.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				NumericDialog instance = NumericDialog.newInstance(mFather, NumericDialog.INTEGER_MODE, Consts.SET_REPETITIONS_METHOD_NAME);
+				NumericDialog instance = NumericDialog.newInstance(mFather, NumericDialog.INTEGER_MODE, Consts.SET_SETS_METHOD_NAME);
 				instance.show(getFragmentManager(), null);
 			}
 		});
@@ -140,8 +140,18 @@ public class ElementsListActivity extends ListActivity implements onElementSelec
 
 	private void updateHeader() {
 		// Update header values
-		((TextView) mHeader.findViewById(R.id.header_name)).setText(mFather.getName());
-		((TextView) mHeader.findViewById(R.id.header_reps)).setText(Integer.toString(mFather.getRepetitions()));
+		TextView name = ((TextView) mHeader.findViewById(R.id.header_name));
+		
+		if (mFather.getName().equals("")) {
+			// Make sure there is a name. If none, put default: Exercise - index
+			// value (+1 for readability)
+			name.setText(getString(R.string.default_exercise_name) + " " + Integer.toString(mFather.getId() + 1));
+		}
+		else {
+			name.setText(mFather.getName());
+		}
+		
+		((TextView) mHeader.findViewById(R.id.header_reps)).setText(Integer.toString(mFather.getSets()));
 	}
 
 	/**
@@ -205,7 +215,7 @@ public class ElementsListActivity extends ListActivity implements onElementSelec
 				AElement element = mFather.getElements().get(from);
 				mFather.getElements().remove(from);
 				mFather.getElements().add(to, element);
-				
+
 				// Value modified, set flag to true
 				sIsModified = true;
 
@@ -219,13 +229,18 @@ public class ElementsListActivity extends ListActivity implements onElementSelec
 		@Override
 		public void remove(int which) {
 			// Save to undo before removing
-			/* ElementsListAdapter.sUndoElement = mAdapter.getItem(which); */// TODO
-																				// Finish
-																				// up
-																				// here
-			
+			if (mAdapter.getItem(which) instanceof TimeExerciseView) {
+				ElementsListAdapter.sUndoElementView = new TimeExerciseView((TimeExerciseView)mAdapter.getItem(which));
+			} else if (mAdapter.getItem(which) instanceof RepetitonExerciseView) {
+				ElementsListAdapter.sUndoElementView = new RepetitonExerciseView((RepetitonExerciseView)mAdapter.getItem(which));
+			} else if (mAdapter.getItem(which) instanceof RestView) {
+				ElementsListAdapter.sUndoElementView = new RestView((RestView)mAdapter.getItem(which));
+			}
+
 			// Value modified, set flag to true
 			sIsModified = true;
+			
+			setUndoMode(true);
 
 			mAdapter.remove(mAdapter.getItem(which));
 
@@ -275,8 +290,14 @@ public class ElementsListActivity extends ListActivity implements onElementSelec
 
 				// Inserting and refreshing
 				mAdapter.insert(ElementsListAdapter.sUndoElementView, ElementsListAdapter.sUndoElementView.mElement.getId());
+				
+				// Re adding to the father
+				mFather.getElements().add(ElementsListAdapter.sUndoElementView.mElement.getId(), ElementsListAdapter.sUndoElementView.mElement);
 
 				mAdapter.notifyDataSetChanged();
+
+				// Value modified, set flag to true
+				sIsModified = true;
 
 				// Reset undo set
 				ElementsListAdapter.sUndoElementView = null;
@@ -297,7 +318,7 @@ public class ElementsListActivity extends ListActivity implements onElementSelec
 			break;
 		case R.id.menu_item_save:
 			// Send result in intent
-			setResult(RESULT_OK, new Intent().putExtra(Consts.CURRENT_SET, mFather));
+			setResult(RESULT_OK, new Intent().putExtra(Consts.CURRENT_EXERCISE, mFather));
 
 			// finishes activity
 			finish();
@@ -345,15 +366,15 @@ public class ElementsListActivity extends ListActivity implements onElementSelec
 			updateHeader();
 
 			// Turn endless to false if not already false
-			((Set) element).setEndless(false);
+			((Exercise) element).setEndless(false);
 
 			// Since the father was updated, the modified field was repetitions.
 			// Check for repetition exercises to update
-			for (AElement curr : ((Set) element).getElements()) {
+			for (AElement curr : ((Exercise) element).getElements()) {
 				if (curr instanceof RepetitionExercise) {
 					// Add/Remove rep/weight values so the lists' size would
 					// match set repetition value
-					int length = ((RepetitionExercise) curr).getReps().size() - ((Set) element).getRepetitions();
+					int length = ((RepetitionExercise) curr).getReps().size() - ((Exercise) element).getSets();
 					int listLength = ((RepetitionExercise) curr).getReps().size();
 					boolean isListSizeLarger = length >= 0;
 

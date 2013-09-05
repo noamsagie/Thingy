@@ -1,18 +1,20 @@
 package com.android.views;
 
+import android.content.SharedPreferences;
+
 import android.view.Window;
 
 import android.app.Activity;
 import android.content.pm.ActivityInfo;
 import android.media.AudioManager;
 import android.os.Bundle;
-import com.android.element.Set;
+import com.android.element.Exercise;
 import com.android.global.Consts;
 import com.android.presenters.PlayPresenter;
 
 public class PlayActivity extends Activity {
 	
-	public Set mWorkout;
+	public Exercise mWorkout;
 	PlayPresenter mPresenter;
 	
 	@Override
@@ -30,5 +32,9 @@ public class PlayActivity extends Activity {
 		if (getIntent().getExtras() == null) {
 			mPresenter.loadWorkoutData(getIntent().getExtras().getString(Consts.SELECT_WORKOUT_TAG));
 		}
+		
+		// Load rest offset
+		SharedPreferences shared = getSharedPreferences(Consts.PREFS_FILE_TAG, 0);
+		int restOffset = shared.getInt(Consts.REST_OFFSET_TAG, 0);
 	}
 }

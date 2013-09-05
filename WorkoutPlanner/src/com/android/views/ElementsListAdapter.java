@@ -5,20 +5,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import com.android.element.Set;
+import com.android.element.Exercise;
 import com.android.global.Consts.elementTypes;
 import java.util.ArrayList;
 
 public class ElementsListAdapter extends ArrayAdapter<AElementView> {
 
-	private Set mFather;
+	private Exercise mFather;
 	private ArrayList<AElementView> mElementViews;
 	static AElementView sUndoElementView;
 
-	// static ArrayList<PreviewElementHolder> sHolders = new
-	// ArrayList<PreviewElementHolder>();
-
-	public ElementsListAdapter(Context context, Set father, ArrayList<AElementView> elements) {
+	public ElementsListAdapter(Context context, Exercise father, ArrayList<AElementView> elements) {
 		super(context, 0, elements);
 		mFather = father;
 		mElementViews = elements;

@@ -1,9 +1,9 @@
 package com.android.global;
 
-import com.android.element.Set;
+import com.android.element.Exercise;
 
 public class Globals {
 
 	// Mutli-usable variables
-	public static Set sFatherSet = new Set(-1);
+	public static Exercise sFatherExercise = new Exercise(-1);
 }

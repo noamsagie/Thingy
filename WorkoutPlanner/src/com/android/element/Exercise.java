@@ -1,24 +1,26 @@
 package com.android.element;
 
+import com.android.global.Consts;
+
 import java.util.ArrayList;
 
-public class Set extends AElement {
+public class Exercise extends AElement {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -3008889828323557540L;
 
-	private int mRepetitions = 0;
+	private int mSets = Consts.DEFAULT_SET_VALUE;
 	private boolean mIsEndless;
 	private ArrayList<AElement> mElements = new ArrayList<AElement>();
 
-	public int getRepetitions() {
-		return mRepetitions;
+	public int getSets() {
+		return mSets;
 	}
 
-	public void setRepetitions(int repetitions) {
-		this.mRepetitions = repetitions;
+	public void setSets(int sets) {
+		this.mSets = sets;
 	}
 
 	public ArrayList<AElement> getElements() {
@@ -37,17 +39,17 @@ public class Set extends AElement {
 		this.mIsEndless = isEndless;
 	}
 
-	public Set(int id) {
+	public Exercise(int id) {
 		setId(id);
 	}
 
 	// Copy constructor
-	public Set(Set original) {
+	public Exercise(Exercise original) {
 		setComment(original.getComment());
 		setId(original.getId());
 		setName(original.getName());
 		setSound(original.getSound());
-		setRepetitions(original.getRepetitions());
+		setSets(original.getSets());
 		setEndless(original.getEndless());
 
 		ArrayList<AElement> clones = new ArrayList<AElement>();

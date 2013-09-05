@@ -12,7 +12,8 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.Toast;
 import com.android.element.AElement;
-import com.android.element.Set;
+import com.android.element.Exercise;
+import com.android.global.Consts;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -101,7 +102,7 @@ public class NumericDialog extends DialogFragment {
 
 		// Creating set name dialog. Making a text field with confirmation and
 		// cancel buttons
-		builder.setTitle(R.string.sets_label).setView(mNumValue).setPositiveButton(R.string.dialog_ok, new DialogInterface.OnClickListener() {
+		builder.setTitle(R.string.exercises_label).setView(mNumValue).setPositiveButton(R.string.dialog_ok, new DialogInterface.OnClickListener() {
 
 			public void onClick(DialogInterface dialog, int id) {
 				double input = -1;
@@ -121,8 +122,8 @@ public class NumericDialog extends DialogFragment {
 					dismiss();
 				}
 
-				// Check element is set and if input is between set ranges
-				if ((sElement instanceof Set) && ((input < 0) || (input > MAX_SET_SIZE))) {
+				// Check element is exercise and if input is between set ranges
+				if ((sElement instanceof Exercise) && ((input < Consts.DEFAULT_SET_VALUE) || (input > MAX_SET_SIZE))) {
 					// Close the dialog
 					Toast.makeText(getActivity(), "Please enter a valid number of sets", Toast.LENGTH_SHORT).show();
 
@@ -131,8 +132,8 @@ public class NumericDialog extends DialogFragment {
 
 					dismiss();
 				}
-				// Check element is NOT set and if input is between ranges 
-				else if (!(sElement instanceof Set) && ((input < 0) || (input > 9999))) {
+				// Check element is NOT exercise and if input is between ranges 
+				else if (!(sElement instanceof Exercise) && ((input < 0) || (input > 9999))) {
 					// Check for time input
 					// Close the dialog
 					Toast.makeText(getActivity(), "Please enter a valid number", Toast.LENGTH_SHORT).show();

@@ -23,8 +23,8 @@ public class PlayPresenter extends APresenter {
 			mCurrentView.mWorkout = XMLWorkoutReader.ReadFile(mCurrentView.openFileInput(workoutName + Consts.FILE_EXTENSION));
 
 			// Set id
-			for (int i = 0; i < Globals.sFatherSet.getElements().size(); i++) {
-				Globals.sFatherSet.getElements().get(i).setId(i);
+			for (int i = 0; i < Globals.sFatherExercise.getElements().size(); i++) {
+				Globals.sFatherExercise.getElements().get(i).setId(i);
 			}
 		} catch (XmlPullParserException e) {
 			Toast.makeText(mCurrentView, "Error reading file. Writing to log...", Toast.LENGTH_SHORT).show();

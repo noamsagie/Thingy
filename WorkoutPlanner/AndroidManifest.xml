@@ -40,7 +40,10 @@
         </activity>
         <activity android:name=".PlayActivity" >
         </activity>
-        <activity android:name=".SelectWorkoutActivity"></activity>
+        <activity android:name=".SettingsActivity" >
+        </activity>
+        <activity android:name=".SelectWorkoutActivity" >
+        </activity>
     </application>
 
 </manifest>

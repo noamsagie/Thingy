@@ -10,16 +10,16 @@ import android.os.Bundle;
 import com.android.element.AElement;
 import com.android.element.RepetitionExercise;
 import com.android.element.Rest;
-import com.android.element.Set;
+import com.android.element.Exercise;
 import com.android.element.TimeExercise;
 import com.android.global.Consts.elementTypes;
 
 public class AddElementDialog extends DialogFragment {
 
-	private static Set sSet;
+	private static Exercise sSet;
 	private onElementSelectedListener mCallback;
 
-	public static AddElementDialog newInstance(Set set) {
+	public static AddElementDialog newInstance(Exercise set) {
 		final AddElementDialog frag = new AddElementDialog();
 		sSet = set;
 
@@ -67,7 +67,7 @@ public class AddElementDialog extends DialogFragment {
 				switch (elementTypes.values()[which]) {
 				case REPETITIONS_INDEX:
 					// Initialize with repetitions value
-					newElement = new RepetitionExercise(sSet.getRepetitions());
+					newElement = new RepetitionExercise(sSet.getSets());
 					break;
 				case REST_INDEX:
 					newElement = new Rest();

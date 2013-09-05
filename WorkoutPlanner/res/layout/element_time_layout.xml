@@ -42,7 +42,7 @@
                 style="@style/smaller_bold"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/sets_default_input" />
+                android:text="@string/exercises_default_input" />
         </LinearLayout>
 
         <LinearLayout

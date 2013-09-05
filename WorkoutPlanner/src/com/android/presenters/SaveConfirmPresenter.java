@@ -25,14 +25,14 @@ public class SaveConfirmPresenter {
 		mCurrentView.getActivity().deleteFile(mCurrentView.getWorkoutName() + Consts.FILE_EXTENSION);
 		
 		// Setting name to fatherSet
-		Globals.sFatherSet.setName(mCurrentView.getWorkoutName());
+		Globals.sFatherExercise.setName(mCurrentView.getWorkoutName());
 		
 		// WRITING FILE
 		try {
 			XMLWorkoutWriter.WriteFile(
 					// XXX Decide if the current solution to the problem of
-					// getting the father set is a decent one
-					Globals.sFatherSet,
+					// getting the father Exercise is a decent one
+					Globals.sFatherExercise,
 					mCurrentView.getActivity().openFileOutput(
 							mCurrentView.getWorkoutName()
 									+ Consts.FILE_EXTENSION,
@@ -40,7 +40,7 @@ public class SaveConfirmPresenter {
 			Toast.makeText(mCurrentView.getActivity(), Consts.SAVE_SUCCESS, Toast.LENGTH_SHORT).show();
 			
 			// Change file name to the new name so saving would overwrite new file
-			Globals.sFatherSet.setName(mCurrentView.getWorkoutName());
+			Globals.sFatherExercise.setName(mCurrentView.getWorkoutName());
 		} catch (IllegalArgumentException e1) {
 			// TODO Write to log
 			e1.printStackTrace();

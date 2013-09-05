@@ -1,16 +1,16 @@
 package com.android.dal;
 
+import android.util.Xml;
 import com.android.element.AElement;
+import com.android.element.Exercise;
 import com.android.element.RepetitionExercise;
 import com.android.element.Rest;
 import com.android.element.TimeExercise;
-import java.util.ArrayList;
-import org.xmlpull.v1.XmlPullParserException;
-import android.util.Xml;
-import com.android.element.Set;
 import com.android.global.Consts;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlSerializer;
 
 public class XMLWorkoutWriter {
@@ -19,8 +19,8 @@ public class XMLWorkoutWriter {
 	 * Writes workout into XML file and saves it in the assets folder of the
 	 * application.
 	 * 
-	 * @param fatherSet
-	 *            The Set containing the entire workout.
+	 * @param fatherExercise
+	 *            The Exercise containing the entire workout.
 	 * @return True if the writing and saving of the file completed
 	 *         successfully. False if not.
 	 * @throws IOException
@@ -28,11 +28,9 @@ public class XMLWorkoutWriter {
 	 * @throws IllegalArgumentException
 	 * @throws XmlPullParserException
 	 */
-	public static boolean WriteFile(Set fatherSet, FileOutputStream fos)
-			throws IllegalArgumentException, IllegalStateException,
-			IOException, XmlPullParserException {
+	public static boolean WriteFile(Exercise fatherSet, FileOutputStream fos) throws IllegalArgumentException, IllegalStateException, IOException, XmlPullParserException {
 
-		// Set variables
+		// Exercise variables
 		boolean result = false;
 		XmlSerializer xmlSerializer = Xml.newSerializer();
 
@@ -41,7 +39,7 @@ public class XMLWorkoutWriter {
 		// Start document
 		xmlSerializer.startDocument(Consts.XML_FILE_HEADER, true);
 
-		// Convert all father set data into xml
+		// Convert all father Exercise data into xml
 		parseSet(xmlSerializer, fatherSet);
 
 		// End document and close stream
@@ -53,11 +51,10 @@ public class XMLWorkoutWriter {
 		return result;
 	}
 
-	private static void parseSet(XmlSerializer xmlSerializer, Set set)
-			throws XmlPullParserException, IOException, NumberFormatException {
+	private static void parseSet(XmlSerializer xmlSerializer, Exercise set) throws XmlPullParserException, IOException, NumberFormatException {
 
-		// Start Set tag
-		xmlSerializer.startTag(null, Consts.XML_TAG_SET);
+		// Start Exercise tag
+		xmlSerializer.startTag(null, Consts.XML_TAG_EXERCISE);
 
 		// Start name tag
 		xmlSerializer.startTag(null, Consts.XML_TAG_ELEMENT_NAME);
@@ -87,40 +84,38 @@ public class XMLWorkoutWriter {
 		xmlSerializer.endTag(null, Consts.XML_TAG_ELEMENT_SOUND);
 
 		// Start repetitions tag
-		xmlSerializer.startTag(null, Consts.XML_TAG_SET_REPETITIONS);
+		xmlSerializer.startTag(null, Consts.XML_TAG_EXERCISE_SETS);
 
-		// Set repetitons value
-		xmlSerializer.text(String.valueOf(set.getRepetitions()));
+		// Set sets value
+		xmlSerializer.text(String.valueOf(set.getSets()));
 
 		// End repetitions tag
-		xmlSerializer.endTag(null, Consts.XML_TAG_SET_REPETITIONS);
-		
+		xmlSerializer.endTag(null, Consts.XML_TAG_EXERCISE_SETS);
+
 		// Start endless tag
-		xmlSerializer.startTag(null, Consts.XML_TAG_SET_ENDLESS);
+		xmlSerializer.startTag(null, Consts.XML_TAG_EXERCISE_ENDLESS);
 
 		// Set endless value
 		xmlSerializer.text(String.valueOf(set.getEndless()));
 
 		// End endless tag
-		xmlSerializer.endTag(null, Consts.XML_TAG_SET_ENDLESS);
+		xmlSerializer.endTag(null, Consts.XML_TAG_EXERCISE_ENDLESS);
 
 		// Start elements tag
-		xmlSerializer.startTag(null, Consts.XML_TAG_SET_ELEMENTS);
+		xmlSerializer.startTag(null, Consts.XML_TAG_EXERCISE_ELEMENTS);
 
 		// Set elements
 		parseElements(xmlSerializer, set.getElements());
 
 		// End elements tag
-		xmlSerializer.endTag(null, Consts.XML_TAG_SET_ELEMENTS);
+		xmlSerializer.endTag(null, Consts.XML_TAG_EXERCISE_ELEMENTS);
 
 		// End Set tag
-		xmlSerializer.endTag(null, Consts.XML_TAG_SET);
+		xmlSerializer.endTag(null, Consts.XML_TAG_EXERCISE);
 
 	}
 
-	private static void parseElements(XmlSerializer xmlSerializer,
-			ArrayList<AElement> elements) throws XmlPullParserException,
-			IOException {
+	private static void parseElements(XmlSerializer xmlSerializer, ArrayList<AElement> elements) throws XmlPullParserException, IOException {
 
 		// Writing elements
 		for (AElement element : elements) {
@@ -128,23 +123,24 @@ public class XMLWorkoutWriter {
 			// type
 			if (element instanceof RepetitionExercise) {
 				// Parse RepetitionExercise
-				parseRepetitionExercise(xmlSerializer,
-						(RepetitionExercise) element);
-			} else if (element instanceof Rest) {
+				parseRepetitionExercise(xmlSerializer, (RepetitionExercise) element);
+			}
+			else if (element instanceof Rest) {
 				// Parse Rest
 				parseRest(xmlSerializer, (Rest) element);
-			} else if (element instanceof TimeExercise) {
+			}
+			else if (element instanceof TimeExercise) {
 				// Parse TimeExercise
 				parseTimeExercise(xmlSerializer, (TimeExercise) element);
-			} else if (element instanceof Set) {
+			}
+			else if (element instanceof Exercise) {
 				// Parse Set
-				parseSet(xmlSerializer, (Set) element);
+				parseSet(xmlSerializer, (Exercise) element);
 			}
 		}
 	}
 
-	private static void parseRest(XmlSerializer xmlSerializer, Rest rest)
-			throws XmlPullParserException, IOException, NumberFormatException {
+	private static void parseRest(XmlSerializer xmlSerializer, Rest rest) throws XmlPullParserException, IOException, NumberFormatException {
 
 		// Start Rest tag
 		xmlSerializer.startTag(null, Consts.XML_TAG_REST);
@@ -189,9 +185,7 @@ public class XMLWorkoutWriter {
 		xmlSerializer.endTag(null, Consts.XML_TAG_REST);
 	}
 
-	private static void parseRepetitionExercise(XmlSerializer xmlSerializer,
-			RepetitionExercise repEx) throws XmlPullParserException,
-			IOException {
+	private static void parseRepetitionExercise(XmlSerializer xmlSerializer, RepetitionExercise repEx) throws XmlPullParserException, IOException {
 
 		// Start RepetitionExercise tag
 		xmlSerializer.startTag(null, Consts.XML_TAG_REPETITION_EXERCISE);
@@ -222,10 +216,10 @@ public class XMLWorkoutWriter {
 
 		// End sound tag
 		xmlSerializer.endTag(null, Consts.XML_TAG_ELEMENT_SOUND);
-		
+
 		// Start data tag
 		xmlSerializer.startTag(null, Consts.XML_TAG_REPETITION_EXERCISE_DATA);
-		
+
 		// Set reps
 		for (int rep : repEx.getReps()) {
 			// Start reps tag
@@ -237,7 +231,7 @@ public class XMLWorkoutWriter {
 			// End reps tag
 			xmlSerializer.endTag(null, Consts.XML_TAG_REPETITION_EXERCISE_REPS);
 		}
-		
+
 		// Set weights
 		for (double weight : repEx.getWeights()) {
 			// Start weights tag
@@ -249,7 +243,7 @@ public class XMLWorkoutWriter {
 			// End weights tag
 			xmlSerializer.endTag(null, Consts.XML_TAG_REPETITION_EXERCISE_WEIGHTS);
 		}
-		
+
 		// End data tag
 		xmlSerializer.endTag(null, Consts.XML_TAG_REPETITION_EXERCISE_DATA);
 
@@ -257,9 +251,7 @@ public class XMLWorkoutWriter {
 		xmlSerializer.endTag(null, Consts.XML_TAG_REPETITION_EXERCISE);
 	}
 
-	private static void parseTimeExercise(XmlSerializer xmlSerializer,
-			TimeExercise timeEx) throws XmlPullParserException, IOException,
-			NumberFormatException {
+	private static void parseTimeExercise(XmlSerializer xmlSerializer, TimeExercise timeEx) throws XmlPullParserException, IOException, NumberFormatException {
 
 		// Start TimeExercise tag
 		xmlSerializer.startTag(null, Consts.XML_TAG_TIME_EXERCISE);

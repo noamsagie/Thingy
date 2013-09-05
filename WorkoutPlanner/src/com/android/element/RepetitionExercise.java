@@ -35,14 +35,13 @@ public class RepetitionExercise extends AExercise {
 	public RepetitionExercise() {
 	}
 
-	// Initialize reps and weight list sizes by the size of the set repetition
-	// value
-	public RepetitionExercise(int setRepetitions) {
-		int length = setRepetitions - mReps.size();
+	// Initialize reps and weight list sizes by the size of the Exercise sets value
+	public RepetitionExercise(int setSets) {
+		int length = setSets - mReps.size();
 
 		for (int i = 0; i < length; i++) {
 			// Adding values to the list because the list size is smaller than
-			// the repetition value of the set
+			// the sets value of the set
 			mReps.add(0);
 			mWeights.add(0.0);
 		}

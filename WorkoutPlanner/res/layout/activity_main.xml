@@ -20,5 +20,13 @@
         android:layout_gravity="center"
         android:onClick="aboutPressed"
         android:text="@string/main_about" />
+    
+        <Button
+        android:id="@+id/settings_activity"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:onClick="settingsPressed"
+        android:text="@string/settings_activity" />
 
 </LinearLayout>
