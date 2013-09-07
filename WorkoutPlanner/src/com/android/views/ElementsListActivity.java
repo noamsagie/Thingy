@@ -1,5 +1,7 @@
 package com.android.views;
 
+import android.widget.ArrayAdapter;
+
 import android.app.Activity;
 import android.app.ListActivity;
 import android.content.Intent;
@@ -37,7 +39,8 @@ public class ElementsListActivity extends ListActivity implements onElementSelec
 	DragSortController mController;
 	Exercise mFather;
 	LinearLayout mHeader;
-
+	
+	public ArrayAdapter<String> mSoundsAdapter;
 	public static boolean sIsModified = false;
 	public static boolean sEditListMode;
 
@@ -64,6 +67,9 @@ public class ElementsListActivity extends ListActivity implements onElementSelec
 
 		// Setting up basic activity requirements
 		setVolumeControlStream(AudioManager.STREAM_MUSIC);
+		
+		// Initializing presenter
+		mPresenter = new ElementsListPresenter(this);
 
 		if (savedInstanceState == null) {
 			// Get father set from intent
@@ -84,6 +90,11 @@ public class ElementsListActivity extends ListActivity implements onElementSelec
 
 		// Set sort false
 		sEditListMode = false;
+		
+		// Set sounds into adapter
+		mSoundsAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item);
+		mSoundsAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+		mSoundsAdapter.addAll(mPresenter.loadSounds());
 
 		// Set the adapter in the list view. The adapter should update the
 		// listview automatically with it's getView method
@@ -365,9 +376,6 @@ public class ElementsListActivity extends ListActivity implements onElementSelec
 			// Update the header
 			updateHeader();
 
-			// Turn endless to false if not already false
-			((Exercise) element).setEndless(false);
-
 			// Since the father was updated, the modified field was repetitions.
 			// Check for repetition exercises to update
 			for (AElement curr : ((Exercise) element).getElements()) {
@@ -388,12 +396,14 @@ public class ElementsListActivity extends ListActivity implements onElementSelec
 							// repetition value of the set
 							((RepetitionExercise) curr).getReps().remove(listLength - i - 1);
 							((RepetitionExercise) curr).getWeights().remove(listLength - i - 1);
+							((RepetitionExercise) curr).getEndlessSets().remove(listLength - i - 1);
 						}
 						else {
 							// Adding values to the list because the list size
 							// is smaller than the repetition value of the set
 							((RepetitionExercise) curr).getReps().add(0);
 							((RepetitionExercise) curr).getWeights().add(0.0);
+							((RepetitionExercise) curr).getEndlessSets().add(false);
 						}
 					}
 				}
@@ -439,8 +449,10 @@ public class ElementsListActivity extends ListActivity implements onElementSelec
 
 	@Override
 	public void finish() {
-		// After using flag, reset it.
+		// Reset static variables
 		sIsModified = false;
+		sEditListMode = false;
+		ElementsListAdapter.sUndoElementView = null; 
 
 		super.finish();
 	}

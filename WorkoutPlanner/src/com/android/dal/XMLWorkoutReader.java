@@ -73,10 +73,6 @@ public class XMLWorkoutReader {
 					// Set sets
 					result.setSets(Integer.parseInt(readText(xpp)));
 				}
-				else if (name.equals(Consts.XML_TAG_EXERCISE_ENDLESS)) {
-					// Set endless
-					result.setEndless(Boolean.parseBoolean(readText(xpp)));
-				}
 				else if (name.equals(Consts.XML_TAG_ELEMENT_NAME)) {
 					// Set name
 					result.setName(readText(xpp));
@@ -108,7 +104,7 @@ public class XMLWorkoutReader {
 
 			// Validate name
 			if (name != null) {
-				// Reading elements
+				// Read elements
 				if (name.equals(Consts.XML_TAG_REPETITION_EXERCISE)) {
 					// Add repetition exercise
 					result.add(parseRepetitionExercise(xpp));
@@ -140,21 +136,21 @@ public class XMLWorkoutReader {
 
 			// Validate name
 			if (name != null) {
-				// Reading attributes
+				// Read attributes
 				if (name.equals(Consts.XML_TAG_ELEMENT_NAME)) {
-					// Set name
+					// Read name
 					result.setName(readText(xpp));
 				}
 				else if (name.equals(Consts.XML_TAG_ELEMENT_COMMENT)) {
-					// Set comment
+					// Read comment
 					result.setComment(readText(xpp));
 				}
 				else if (name.equals(Consts.XML_TAG_ELEMENT_SOUND)) {
-					// Set sound file path
+					// Read sound file path
 					result.setSound(readText(xpp));
 				}
 				else if (name.equals(Consts.XML_TAG_ELEMENT_TIME)) {
-					// Set time
+					// Read time
 					result.setTime(Double.parseDouble(readText(xpp)));
 				}
 			}
@@ -172,31 +168,35 @@ public class XMLWorkoutReader {
 
 			// Validate name
 			if (name != null) {
-				// Reading attributes
+				// Read attributes
 				if (name.equals(Consts.XML_TAG_ELEMENT_NAME)) {
-					// Set name
+					// Read name
 					result.setName(readText(xpp));
 				}
 				else if (name.equals(Consts.XML_TAG_ELEMENT_COMMENT)) {
-					// Set comment
+					// Read comment
 					result.setComment(readText(xpp));
 				}
 				else if (name.equals(Consts.XML_TAG_ELEMENT_SOUND)) {
-					// Set sound file path
+					// Read sound file path
 					result.setSound(readText(xpp));
 				}
 				else if (name.equals(Consts.XML_TAG_REPETITION_EXERCISE_DATA)) {
-					// Set reps and weights data
+					// Read reps, weights, endless and groups data
 					while (xpp.next() != XmlPullParser.END_TAG) {
 						name = xpp.getName();
 
 						if (name.equals(Consts.XML_TAG_REPETITION_EXERCISE_REPS)) {
-							// Set reps
+							// Read reps
 							result.getReps().add(Integer.parseInt(readText(xpp)));
 						}
 						else if (name.equals(Consts.XML_TAG_REPETITION_EXERCISE_WEIGHTS)) {
-							// Set weights
+							// Read weights
 							result.getWeights().add(Double.parseDouble(readText(xpp)));
+						}
+						else if (name.equals(Consts.XML_TAG_REPETITION_EXERCISE_ENDLESS)) {
+							// Read weights
+							result.getEndlessSets().add(Boolean.parseBoolean(readText(xpp)));
 						}
 					}
 				}
@@ -215,21 +215,21 @@ public class XMLWorkoutReader {
 
 			// Validate name
 			if (name != null) {
-				// Reading attributes
+				// Read attributes
 				if (name.equals(Consts.XML_TAG_ELEMENT_NAME)) {
-					// Set name
+					// Read name
 					result.setName(readText(xpp));
 				}
 				else if (name.equals(Consts.XML_TAG_ELEMENT_COMMENT)) {
-					// Set comment
+					// Read comment
 					result.setComment(readText(xpp));
 				}
 				else if (name.equals(Consts.XML_TAG_ELEMENT_SOUND)) {
-					// Set sound file path
+					// Read sound file path
 					result.setSound(readText(xpp));
 				}
 				else if (name.equals(Consts.XML_TAG_ELEMENT_TIME)) {
-					// Set time
+					// Read time
 					result.setTime(Double.parseDouble(readText(xpp)));
 				}
 			}

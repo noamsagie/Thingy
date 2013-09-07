@@ -60,4 +60,6 @@
     <string name="delete_workout_title">Delete Workout</string>
     <string name="new_workout">New</string>
     <string name="rest_offset">Rest Offset (seconds):</string>
+    <string name="error_sounds">Error loading sounds</string>
+    <string name="save_success">File saved successfully</string>
 </resources>

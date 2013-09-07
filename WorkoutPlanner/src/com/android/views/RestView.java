@@ -7,8 +7,11 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnFocusChangeListener;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import com.android.element.Rest;
 import com.android.global.Consts;
@@ -30,7 +33,7 @@ public class RestView extends AElementView {
 			holder = new PreviewRestHolder();
 			holder.nameLabel = (TextView) convertView.findViewById(R.id.previewElementName);
 			holder.commentInput = (EditText) convertView.findViewById(R.id.previewElementComment);
-			holder.soundInput = (EditText) convertView.findViewById(R.id.previewElementSound);
+			holder.soundInput = (Spinner) convertView.findViewById(R.id.previewSetSoundInput);
 			holder.timeLabel = (TextView) convertView.findViewById(R.id.previewElementTime);
 			holder.dragHandler = (ImageView) convertView.findViewById(R.id.drag_handle);
 
@@ -47,8 +50,12 @@ public class RestView extends AElementView {
 		holder.element = mElement;
 		holder.nameLabel.setText(mElement.getName());
 		holder.commentInput.setText(mElement.getComment());
-		holder.soundInput.setText(mElement.getSound());
 		holder.timeLabel.setText(Double.toString(((Rest) mElement).getTime()));
+
+		// Set sound adapter if it isn't already set
+		if (holder.soundInput.getAdapter() == null) {
+			holder.soundInput.setAdapter(((ElementsListActivity) mContext).mSoundsAdapter);
+		}
 
 		// Set listeners
 		holder.nameLabel.setOnClickListener(new OnClickListener() {
@@ -72,17 +79,27 @@ public class RestView extends AElementView {
 			}
 		});
 
-		// TODO Change that into a dialog that allows selection of sounds
-		holder.soundInput.setOnFocusChangeListener(new OnFocusChangeListener() {
+		holder.soundInput.setOnItemSelectedListener(new OnItemSelectedListener() {
+			boolean isInitialized = false;
+
 			@Override
-			public void onFocusChange(View v, boolean hasFocus) {
-				if (!hasFocus) {
-					// After focus is lost, save the text into the set
-					mElement.setSound(holder.soundInput.getText().toString());
+			public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+				// Do the following only when event is called from user. This
+				// SHOULD be called once programmatically when initialized
+				if (isInitialized) {
+					// Set sound name
+					mElement.setSound(parent.getItemAtPosition(pos).toString() + Consts.SOUND_FILE_EXTENSION);
+
+					// Value modified, set flag to true
+					PreviewActivity.sIsModified = true;
 				}
 
-				// Value modified, set flag to true
-				ElementsListActivity.sIsModified = true;
+				isInitialized = true;
+			}
+
+			@Override
+			public void onNothingSelected(AdapterView<?> arg0) {
+				// Do nothing
 			}
 		});
 
@@ -101,6 +118,9 @@ public class RestView extends AElementView {
 
 		// Set holder visibility
 		holder.dragHandler.setVisibility((ElementsListActivity.sEditListMode) ? View.VISIBLE : View.GONE);
+
+		// Display selected sound
+		holder.soundInput.setSelection(((ElementsListActivity) mContext).mSoundsAdapter.getPosition(mElement.getSound().substring(0, mElement.getSound().length() - Consts.SOUND_FILE_EXTENSION.length())));
 
 		return convertView;
 	}

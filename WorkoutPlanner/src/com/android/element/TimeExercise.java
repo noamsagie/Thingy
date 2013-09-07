@@ -1,5 +1,7 @@
 package com.android.element;
 
+import com.android.global.Consts;
+
 public class TimeExercise extends AExercise {
 	/**
 	 * 
@@ -16,7 +18,10 @@ public class TimeExercise extends AExercise {
 		this.mTime = time;
 	}
 	
-	public TimeExercise() {}
+	public TimeExercise() {
+		// Default sound
+		setSound(Consts.DEFAULT_SOUND_TIME_EXERCISE);
+	}
 	
 	public TimeExercise(TimeExercise original) {
 		setComment(original.getComment());

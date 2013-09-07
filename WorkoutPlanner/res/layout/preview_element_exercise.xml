@@ -80,13 +80,6 @@
         android:orientation="vertical"
         android:visibility="gone" >
 
-        <CheckBox
-            android:id="@+id/previewSetEndlessInput"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:checked="false"
-            android:text="@string/endless_string" />
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -116,12 +109,10 @@
                 android:layout_height="wrap_content"
                 android:text="@string/sound_label" />
 
-            <EditText
-                android:id="@+id/previewSetSoundInput"
+			<Spinner 
+			    android:id="@+id/previewSetSoundInput"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="text"
-                android:text="@string/empty" />
+                android:layout_height="wrap_content" />
         </LinearLayout>
 
         <LinearLayout

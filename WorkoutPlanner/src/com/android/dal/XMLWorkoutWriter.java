@@ -92,15 +92,6 @@ public class XMLWorkoutWriter {
 		// End repetitions tag
 		xmlSerializer.endTag(null, Consts.XML_TAG_EXERCISE_SETS);
 
-		// Start endless tag
-		xmlSerializer.startTag(null, Consts.XML_TAG_EXERCISE_ENDLESS);
-
-		// Set endless value
-		xmlSerializer.text(String.valueOf(set.getEndless()));
-
-		// End endless tag
-		xmlSerializer.endTag(null, Consts.XML_TAG_EXERCISE_ENDLESS);
-
 		// Start elements tag
 		xmlSerializer.startTag(null, Consts.XML_TAG_EXERCISE_ELEMENTS);
 
@@ -242,6 +233,18 @@ public class XMLWorkoutWriter {
 
 			// End weights tag
 			xmlSerializer.endTag(null, Consts.XML_TAG_REPETITION_EXERCISE_WEIGHTS);
+		}
+		
+		// Set endless
+		for (Boolean endless : repEx.getEndlessSets()) {
+			// Start weights tag
+			xmlSerializer.startTag(null, Consts.XML_TAG_REPETITION_EXERCISE_ENDLESS);
+
+			// Set weights value
+			xmlSerializer.text(String.valueOf(endless));
+
+			// End weights tag
+			xmlSerializer.endTag(null, Consts.XML_TAG_REPETITION_EXERCISE_ENDLESS);
 		}
 
 		// End data tag

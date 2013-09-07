@@ -1,10 +1,7 @@
 package com.android.views;
 
-import android.content.SharedPreferences;
-
-import android.view.Window;
-
 import android.app.Activity;
+import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.media.AudioManager;
 import android.os.Bundle;
@@ -24,7 +21,6 @@ public class PlayActivity extends Activity {
 		// Setting up basic activity requirements
 		setVolumeControlStream(AudioManager.STREAM_MUSIC);
 		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.activity_play);
 		
 		

@@ -62,11 +62,10 @@
                 android:layout_height="wrap_content"
                 android:text="@string/sound_label" />
 
-            <EditText
-                android:id="@+id/previewElementSound"
+           <Spinner
+                android:id="@+id/previewSetSoundInput"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="text" />
+                android:layout_height="wrap_content" />
         </LinearLayout>
 
         <LinearLayout

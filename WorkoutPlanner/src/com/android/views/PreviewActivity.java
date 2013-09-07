@@ -8,10 +8,11 @@ import android.media.AudioManager;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ArrayAdapter;
 import android.widget.Toast;
 import com.android.element.AElement;
-import com.android.element.RepetitionExercise;
 import com.android.element.Exercise;
+import com.android.element.RepetitionExercise;
 import com.android.global.Consts;
 import com.android.global.Consts.resultActivities;
 import com.android.global.Globals;
@@ -30,6 +31,7 @@ public class PreviewActivity extends ListActivity implements onNumberEnteredList
 	MenuItem mUndoIcon;
 	DragSortListView mItemsList;
 	DragSortController mController;
+	ArrayAdapter<String> mSoundsAdapter;
 
 	public static boolean sIsModified = false;
 	public static boolean sEditListMode = false;
@@ -67,7 +69,7 @@ public class PreviewActivity extends ListActivity implements onNumberEnteredList
 
 		// Creating the presenter for this view
 		mPresenter = new PreviewPresenter(this);
-
+		
 		// If creating for the first time, load or create workout
 		if (savedInstanceState == null) {
 			// Get selected workout name from intent
@@ -195,8 +197,6 @@ public class PreviewActivity extends ListActivity implements onNumberEnteredList
 		// Check if a set was edited. If so, assuming it was the repetitions
 		// value!
 		if (element instanceof Exercise) {
-			// Turn endless to false if not already false
-			((Exercise) element).setEndless(false);
 
 			// Check for repetition exercises
 			for (AElement curr : ((Exercise) element).getElements()) {
@@ -217,12 +217,14 @@ public class PreviewActivity extends ListActivity implements onNumberEnteredList
 							// repetition value of the set
 							((RepetitionExercise) curr).getReps().remove(listLength - i - 1);
 							((RepetitionExercise) curr).getWeights().remove(listLength - i - 1);
+							((RepetitionExercise) curr).getEndlessSets().remove(listLength - i - 1);
 						}
 						else {
 							// Adding values to the list because the list size
 							// is smaller than the repetition value of the set
 							((RepetitionExercise) curr).getReps().add(0);
 							((RepetitionExercise) curr).getWeights().add(0.0);
+							((RepetitionExercise) curr).getEndlessSets().add(false);
 						}
 					}
 				}
@@ -399,8 +401,11 @@ public class PreviewActivity extends ListActivity implements onNumberEnteredList
 
 	@Override
 	public void finish() {
-		// After using flag, reset it.
+		// Reset static variables
 		sIsModified = false;
+		sEditListMode = false;
+		PreviewExerciseAdapter.sExpandedViews.clear();
+		PreviewExerciseAdapter.sUndoSet = null;
 
 		super.finish();
 	}

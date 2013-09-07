@@ -78,7 +78,7 @@ public class SavePresenter {
 			e1.printStackTrace();
 		}
 		
-		Toast.makeText(mCurrentView.getActivity(), Consts.SAVE_SUCCESS, Toast.LENGTH_SHORT).show();
+		Toast.makeText(mCurrentView.getActivity(), R.string.save_success, Toast.LENGTH_SHORT).show();
 	}
 
 	// Returns true if file exists

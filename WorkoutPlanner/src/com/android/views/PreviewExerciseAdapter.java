@@ -9,15 +9,15 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnFocusChangeListener;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
-import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
+import android.widget.Spinner;
 import android.widget.TextView;
 import com.android.element.AElement;
 import com.android.element.Exercise;
@@ -33,12 +33,18 @@ public class PreviewExerciseAdapter extends ArrayAdapter<AElement> {
 
 	// private static final String TAG = "WorkoutPlanner_PreviewSetAdapter";
 	private ArrayList<AElement> mExercises;
+	private ArrayAdapter<String> mSoundsAdapter;
 	static Exercise sUndoSet;
 	static ArrayList<Boolean> sExpandedViews = new ArrayList<Boolean>();
 
 	public PreviewExerciseAdapter(Context context, int textViewResourceId, List<AElement> sets) {
 		super(context, textViewResourceId, sets);
 		mExercises = (ArrayList<AElement>) sets;
+
+		// Set sounds into adapter
+		mSoundsAdapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item);
+		mSoundsAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+		mSoundsAdapter.addAll(((PreviewActivity) getContext()).mPresenter.loadSounds());
 	}
 
 	@Override
@@ -86,10 +92,9 @@ public class PreviewExerciseAdapter extends ArrayAdapter<AElement> {
 		holder.expandArea = (View) inflatedView.findViewById(R.id.expandArea);
 		holder.data = (LinearLayout) inflatedView.findViewById(R.id.previewData);
 		holder.setsLabel = (TextView) inflatedView.findViewById(R.id.previewRepetitionsInput);
-		holder.endlessInput = (CheckBox) inflatedView.findViewById(R.id.previewSetEndlessInput);
 		holder.nameLabel = (TextView) inflatedView.findViewById(R.id.previewSetNameLabel);
 		holder.commentInput = (EditText) inflatedView.findViewById(R.id.previewSetCommentInput);
-		holder.soundInput = (EditText) inflatedView.findViewById(R.id.previewSetSoundInput);
+		holder.soundInput = (Spinner) inflatedView.findViewById(R.id.previewSetSoundInput);
 		holder.editElementButton = (Button) inflatedView.findViewById(R.id.previewSetAddElements);
 		holder.expand = (View) inflatedView.findViewById(R.id.infoArea);
 		holder.collapse = (View) inflatedView.findViewById(R.id.collapse);
@@ -107,10 +112,13 @@ public class PreviewExerciseAdapter extends ArrayAdapter<AElement> {
 
 		// Set position of the set into id for later use. Very important
 		holder.exercise.setId(position);
-		holder.endlessInput.setChecked(holder.exercise.getEndless());
-		holder.soundInput.setText(holder.exercise.getSound());
 		holder.nameLabel.setText(holder.exercise.getName());
 		holder.commentInput.setText(holder.exercise.getComment());
+
+		// Set sound adapter if it isn't already set
+		if (holder.soundInput.getAdapter() == null) {
+			holder.soundInput.setAdapter(mSoundsAdapter);
+		}
 
 		// Setting visibility of the drag handler
 		holder.dragHandler.setVisibility((PreviewActivity.sEditListMode) ? View.VISIBLE : View.GONE);
@@ -123,38 +131,6 @@ public class PreviewExerciseAdapter extends ArrayAdapter<AElement> {
 		if (holder.nameLabel.getText().equals("")) {
 			holder.nameLabel.setText(getContext().getString(R.string.default_exercise_name) + " " + Integer.toString(holder.exercise.getId() + 1));
 		}
-
-		// Set repetitions value according to the endless flag
-		if (holder.exercise.getEndless()) {
-			holder.setsLabel.setText(R.string.infinity);
-		}
-		else {
-			holder.setsLabel.setText(String.valueOf(holder.exercise.getSets()));
-		}
-
-		// Set click listeners
-		holder.endlessInput.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-
-			@Override
-			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-
-				// Save endless flag
-				holder.exercise.setEndless(isChecked);
-
-				// If an endless set - Dropset
-				if (isChecked) {
-					holder.setsLabel.setText(R.string.infinity);
-				}
-				else {
-					// Regular set
-					holder.setsLabel.setText(String.valueOf(holder.exercise.getSets()));
-				}
-
-				// Value modified, set flag to true
-				PreviewActivity.sIsModified = true;
-			}
-
-		});
 
 		holder.setsLabel.setOnClickListener(new OnClickListener() {
 			@Override
@@ -185,17 +161,26 @@ public class PreviewExerciseAdapter extends ArrayAdapter<AElement> {
 			}
 		});
 
-		// TODO Change that into a dialog that allows selection of sounds
-		holder.soundInput.setOnFocusChangeListener(new OnFocusChangeListener() {
+		holder.soundInput.setOnItemSelectedListener(new OnItemSelectedListener() {
+			boolean isInitialized = false;
+
 			@Override
-			public void onFocusChange(View v, boolean hasFocus) {
-				if (!hasFocus) {
-					// After focus is lost, save the text into the set
-					holder.exercise.setSound(holder.soundInput.getText().toString());
+			public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+				// Do the following only when event is called from user. This SHOULD be called once programmatically when initialized
+				if (isInitialized) {
+					// Set sound name
+					holder.exercise.setSound(parent.getItemAtPosition(pos).toString() + Consts.SOUND_FILE_EXTENSION);
+
+					// Value modified, set flag to true
+					PreviewActivity.sIsModified = true;
 				}
 
-				// Value modified, set flag to true
-				PreviewActivity.sIsModified = true;
+				isInitialized = true;
+			}
+
+			@Override
+			public void onNothingSelected(AdapterView<?> parent) {
+
 			}
 		});
 
@@ -209,6 +194,12 @@ public class PreviewExerciseAdapter extends ArrayAdapter<AElement> {
 
 				// Save expand mode
 				sExpandedViews.set(holder.exercise.getId(), true);
+
+				// Display elements
+				displayElements(holder);
+
+				// Display selected sound
+				holder.soundInput.setSelection(mSoundsAdapter.getPosition(holder.exercise.getSound().substring(0, holder.exercise.getSound().length() - Consts.SOUND_FILE_EXTENSION.length())));
 
 				// Move screen to current item
 				((PreviewActivity) getContext()).mItemsList.smoothScrollToPositionFromTop(holder.exercise.getId(), 0);
@@ -240,12 +231,15 @@ public class PreviewExerciseAdapter extends ArrayAdapter<AElement> {
 				((Activity) getContext()).startActivityForResult(intent, resultActivities.ELEMENTS_LIST.ordinal());
 			}
 		});
-
-		// Display elements
-		displayElements(holder);
+		
+		// Update elements list if display is out of sync with data
+		if (holder.data.getChildCount() != holder.exercise.getElements().size()) {
+			// Display elements
+			displayElements(holder);
+		}
 	}
 
-	private void displayElements(PreviewItemHolder holder) {
+	public void displayElements(PreviewItemHolder holder) {
 
 		// Clear first
 		holder.data.removeAllViews();

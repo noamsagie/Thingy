@@ -19,6 +19,7 @@ public class ElementsListAdapter extends ArrayAdapter<AElementView> {
 		super(context, 0, elements);
 		mFather = father;
 		mElementViews = elements;
+
 	}
 
 	@Override

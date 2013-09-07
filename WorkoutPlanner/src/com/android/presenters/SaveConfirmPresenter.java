@@ -1,5 +1,7 @@
 package com.android.presenters;
 
+import com.android.views.R;
+
 import android.widget.Toast;
 
 import android.content.Context;
@@ -37,7 +39,7 @@ public class SaveConfirmPresenter {
 							mCurrentView.getWorkoutName()
 									+ Consts.FILE_EXTENSION,
 							Context.MODE_APPEND));
-			Toast.makeText(mCurrentView.getActivity(), Consts.SAVE_SUCCESS, Toast.LENGTH_SHORT).show();
+			Toast.makeText(mCurrentView.getActivity(), R.string.save_success, Toast.LENGTH_SHORT).show();
 			
 			// Change file name to the new name so saving would overwrite new file
 			Globals.sFatherExercise.setName(mCurrentView.getWorkoutName());

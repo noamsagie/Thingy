@@ -12,7 +12,6 @@ public class Exercise extends AElement {
 	private static final long serialVersionUID = -3008889828323557540L;
 
 	private int mSets = Consts.DEFAULT_SET_VALUE;
-	private boolean mIsEndless;
 	private ArrayList<AElement> mElements = new ArrayList<AElement>();
 
 	public int getSets() {
@@ -31,16 +30,11 @@ public class Exercise extends AElement {
 		this.mElements = elements;
 	}
 
-	public boolean getEndless() {
-		return mIsEndless;
-	}
-
-	public void setEndless(boolean isEndless) {
-		this.mIsEndless = isEndless;
-	}
-
 	public Exercise(int id) {
 		setId(id);
+		
+		// Default sound
+		setSound(Consts.DEFAULT_SOUND_EXERCISE);
 	}
 
 	// Copy constructor
@@ -50,7 +44,6 @@ public class Exercise extends AElement {
 		setName(original.getName());
 		setSound(original.getSound());
 		setSets(original.getSets());
-		setEndless(original.getEndless());
 
 		ArrayList<AElement> clones = new ArrayList<AElement>();
 
