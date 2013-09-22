@@ -54,7 +54,7 @@ public class PreviewActivity extends ListActivity implements onNumberEnteredList
 		// cancel that or keep?
 		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
-		// Setting drag stuff data
+		// Set drag stuff data
 		DragSortListView lv = (DragSortListView) getListView();
 		lv.setDropListener(onDrop);
 		lv.setRemoveListener(onRemove);
@@ -64,10 +64,10 @@ public class PreviewActivity extends ListActivity implements onNumberEnteredList
 		lv.setOnTouchListener(mController);
 		lv.setDragEnabled(true);
 
-		// Setting up basic activity requirements
+		// Set up basic activity requirements
 		setVolumeControlStream(AudioManager.STREAM_MUSIC);
 
-		// Creating the presenter for this view
+		// Create the presenter for this view
 		mPresenter = new PreviewPresenter(this);
 		
 		// If creating for the first time, load or create workout

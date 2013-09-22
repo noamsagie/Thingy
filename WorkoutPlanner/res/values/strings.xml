@@ -62,4 +62,12 @@
     <string name="rest_offset">Rest Offset (seconds):</string>
     <string name="error_sounds">Error loading sounds</string>
     <string name="save_success">File saved successfully</string>
+    <string name="prev_element_text">Previous Element</string>
+    <string name="next_element_text">Next Element</string>
+    <string name="prev_exercise_text">Previous Exercise</string>
+    <string name="next_exercise_text">Next Exercise</string>
+    <string name="none_exercise_text">None</string>
+    <string name="finish_rep">Finish Rep</string>
+    <string name="workout_finished">Workout Completed!</string>
+    <string name="empty_workout">Empty workout</string>
 </resources>

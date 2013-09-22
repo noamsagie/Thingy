@@ -63,10 +63,12 @@
                 android:inputType="text" />
         </LinearLayout>
 
+        <!-- Not allowing user to select sound for now. Option still exists -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal" >
+            android:orientation="horizontal"
+            android:visibility="gone" >
 
             <TextView
                 android:id="@+id/previewSetSoundLabel"

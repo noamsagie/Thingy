@@ -114,6 +114,7 @@ public class PreviewExerciseAdapter extends ArrayAdapter<AElement> {
 		holder.exercise.setId(position);
 		holder.nameLabel.setText(holder.exercise.getName());
 		holder.commentInput.setText(holder.exercise.getComment());
+		holder.setsLabel.setText(String.valueOf(holder.exercise.getSets()));
 
 		// Set sound adapter if it isn't already set
 		if (holder.soundInput.getAdapter() == null) {
